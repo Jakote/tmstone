@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /quote/
+
+Sitemap: https://tmstone.co.ls/sitemap.xml

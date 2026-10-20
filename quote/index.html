@@ -1,0 +1,2624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TM Stone — Quote Builder</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='0' width='100' height='100' fill='%23f26522'/><text x='50' y='68' font-size='50' font-weight='bold' text-anchor='middle' fill='white' font-family='sans-serif'>TM</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+ /* Industrial Precision — the same system the marketing site runs on, so the quote
+    builder and the public page read as one product. Rugged professionalism: the
+    geometry of a paver, the precision of an instrument. */
+ --bg:#fff8f6;         /* surface            */
+ --card:#fff;
+ --card2:#F2F4F6;      /* recessed row / disabled field */
+ --line:#DDE1E6;       /* border-muted       */
+ --line2:#E8ECF0;      /* hairline, inside tables */
+ --ink:#261813;        /* on-surface         */
+ --ink2:#594138;       /* on-surface-variant */
+ --ink3:#8d7166;       /* outline            */
+ --ac:#f26522;         /* primary-container — the vivid action orange */
+ --ac2:#a63b00;        /* primary — darker, for hover and depth */
+ --dark:#121416;       /* charcoal-deep      */
+ --dark2:#1a1c1e;
+ --ondark:#b8bfc6;     /* body text on charcoal   */
+ --ondark2:#8c939a;    /* dim labels on charcoal  */
+ --ok:#2D6A4F;--warn:#8a4b00;--bad:#b3261e;
+ --r:0;                /* sharp. Every corner. The system is explicit about this. */
+ --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+h1,h2,h3,.cond{font-family:'Montserrat',sans-serif;text-transform:uppercase;font-weight:800;letter-spacing:-.02em}
+h2,h3{font-weight:700}
+/* JetBrains Mono is reserved for figures. It is what makes the builder read as an
+   instrument rather than a form: every column of Maloti lines up digit under digit. */
+.num,.big,.mono,input[type=number],input[inputmode=decimal]{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.top{background:var(--dark);color:#fff;padding:0 18px;position:sticky;top:0;z-index:50}
+.tw{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:16px;height:58px}
+.lg{display:flex;align-items:center;gap:9px;flex:0 0 auto}
+/* The wordmark and its status line must never wrap: the header is a fixed 58px
+   band and a wrapped tagline pushes the logo out of it. Below 900px the tabs
+   need the width more than the status line does, so the line goes. */
+.lg b,.lg span{white-space:nowrap}
+.lgm{width:32px;height:32px;border-radius:0;background:var(--ac);display:grid;place-items:center;font-family:'Montserrat',sans-serif;font-weight:700;font-size:15px}
+.lg b{font-family:'Montserrat',sans-serif;font-size:17px;line-height:1;display:block}
+.lg span{font-family:var(--mono);font-size:9.5px;color:var(--ondark2);letter-spacing:.13em}
+.tabs{display:flex;gap:3px;margin-left:auto}
+.tab{background:none;border:none;color:var(--ondark);font-family:'Inter';font-size:13px;font-weight:600;padding:8px 15px;border-radius:0;cursor:pointer}
+.tab:hover{background:rgba(255,255,255,.08);color:#fff}
+.tab.on{background:var(--ac);color:#fff}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 18px 60px}
+.page{display:none}.page.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:14px}
+.card h2{font-size:19px;margin-bottom:3px}
+.card .sub{font-size:12.5px;color:var(--ink3);margin-bottom:16px}
+label{display:block;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:0 0 5px}
+input,select,textarea{width:100%;padding:8px 10px;border:2px solid var(--line);border-radius:0;font-family:'Inter';font-size:14px;background:#fff;color:var(--ink);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--ac)}
+input:disabled{background:var(--card2);color:var(--ink3)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.g4{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:11px;align-items:end}
+/* Montserrat all-caps with a hard offset shadow on hover — no blur, no easing into
+   softness. The button moves like a stamped part, not a bubble. */
+.btn{background:var(--ac);color:#fff;border:none;padding:10px 17px;border-radius:0;
+     font-family:'Montserrat',sans-serif;font-weight:700;font-size:12.5px;
+     text-transform:uppercase;letter-spacing:.05em;cursor:pointer;
+     transition:background .12s linear,box-shadow .12s linear}
+.btn:hover{background:var(--ac2);box-shadow:4px 4px 0 rgba(18,20,22,.18)}
+.btn.ghost{background:#fff;border:2px solid var(--line);color:var(--ink2)}
+.btn.ghost:hover{border-color:var(--ac);color:var(--ac)}
+.btn.sm{padding:6px 11px;font-size:12px}
+.btn.dgr{background:#fff;border:2px solid var(--line);color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);padding:9px 10px;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid var(--line2)}
+tr:last-child td{border-bottom:none}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.tot{background:var(--dark);color:#fff;border-radius:var(--r);padding:20px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
+.tot .big{font-family:var(--mono);font-size:40px;font-weight:700;color:var(--ac);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.tot .lbl{font-family:var(--mono);font-size:10px;color:var(--ondark2);letter-spacing:.1em;text-transform:uppercase}
+.tot .brk{font-size:12.5px;color:var(--ondark);line-height:1.9}
+.tot .brk b{color:#fff}
+.pill{display:inline-block;padding:3px 9px;border-radius:0;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.p-draft{background:#E8ECF0;color:var(--ink2)}
+.p-sent{background:#e3edf5;color:#1c5b8a}
+.p-accepted{background:#e0f0e5;color:var(--ok)}
+.p-declined{background:#f6e3e1;color:var(--bad)}
+.alert{border-radius:0;padding:13px 15px;font-size:13px;line-height:1.65;margin-bottom:13px}
+.a-warn{background:#fdf3e0;border:1px solid #e8c98a;color:#7a5310}
+.a-ok{background:#e8f4ec;border:1px solid #a9d3b8;color:#20603a}
+.mini{font-size:11.5px;color:var(--ink3);line-height:1.6}
+.mat{display:grid;grid-template-columns:1.6fr 1fr 1fr auto;gap:11px;align-items:end;padding:11px 0;border-bottom:1px solid var(--line)}
+/* Alignment inside a row is a RULE, not a per-row padding tweak. An input is
+   label + 5px + control; its text baseline sits 10px above the box bottom (8px
+   padding + 2px border, unchanged in total by the Industrial Precision restyle). Caption cells get that same 10px so their text lines up
+   with the input's text, and buttons bottom-align with the input box. */
+.mat>.mini{padding-bottom:10px}
+.mat>.actions{display:flex;gap:7px;align-items:stretch}
+.mat>.actions .btn{display:flex;align-items:center}
+.mat .rowctl{display:flex;gap:7px;align-items:stretch}
+.mat .rowctl select,.mat .rowctl .btn{height:38px;display:flex;align-items:center}
+.chg{font-size:11.5px;font-weight:700}
+.up{color:var(--bad)}.down{color:var(--ok)}.same{color:var(--ink3)}
+/* SHOW_INTERNAL_COSTS === false puts .hide-internal on <body>. Anything carrying
+   .internal is TM Stone's own cost, margin, profit, mark-up or supplier price and
+   disappears from the screen AND from every printed document (this rule is outside
+   @media print on purpose, so one rule covers both). */
+body.hide-internal .internal{display:none!important}
+/* A printed quote or invoice is a DOCUMENT, not a screenshot of the app. It is
+   rendered into #printDoc and printed alone, so no input boxes, tabs or buttons
+   can end up on something a customer sees. */
+#printDoc{display:none}
+@media print{
+  body.doc .wrap{display:none!important}
+  body.doc #printDoc{display:block!important}
+  #printDoc{font-size:11.5pt;color:#000}
+  .dochead{display:flex;justify-content:space-between;align-items:flex-start;
+           border-bottom:3px solid #a63b00;padding-bottom:10mm;margin-bottom:8mm}
+  .dochead .co{font-family:Montserrat,Oswald,Impact,sans-serif;font-size:22pt;letter-spacing:.5px;line-height:1}
+  .dochead .sub{font-size:9pt;color:#333;margin-top:2mm;line-height:1.5}
+  .dochead .kind{font-family:Montserrat,Oswald,Impact,sans-serif;font-size:20pt;text-align:right;line-height:1.1}
+  .dochead .meta{font-size:9.5pt;text-align:right;margin-top:3mm;line-height:1.6}
+  .docto{margin-bottom:7mm;font-size:10.5pt;line-height:1.6}
+  .docto .lbl{font-size:8pt;letter-spacing:1px;text-transform:uppercase;color:#666}
+  #printDoc table{width:100%;border-collapse:collapse;font-size:10.5pt}
+  #printDoc th{text-align:left;border-bottom:1.5px solid #000;padding:3mm 2mm;
+               font-size:8.5pt;letter-spacing:.6px;text-transform:uppercase}
+  #printDoc td{padding:2.6mm 2mm;border-bottom:.4px solid #ccc;vertical-align:top}
+  #printDoc .num{text-align:right;white-space:nowrap}
+  .doctot{margin-top:6mm;margin-left:auto;width:78mm;font-size:11pt}
+  .doctot div{display:flex;justify-content:space-between;padding:2mm 0}
+  .doctot .grand{border-top:2px solid #000;border-bottom:2px solid #000;
+                 font-weight:700;font-size:13pt;margin-top:1mm}
+  .docpay{margin-top:9mm;border:1.2px solid #000;padding:5mm;font-size:10pt;line-height:1.7}
+  .docpay h4{font-family:Montserrat,Oswald,Impact,sans-serif;font-size:11pt;margin:0 0 2mm}
+  .docfoot{margin-top:10mm;padding-top:4mm;border-top:.6px solid #999;
+           font-size:8.5pt;color:#555;line-height:1.6}
+  .docstop{border:2.5px solid #000;background:#eee;padding:5mm;margin-bottom:7mm;
+           font-size:10.5pt;line-height:1.6}
+  .docstop b{font-size:12pt}
+  .top,.tabs,.noprint{display:none!important}
+  body{background:#fff}.wrap{padding:0;max-width:100%}
+  .card{border:none;padding:0;margin-bottom:18px}
+  .tot{background:#fff;color:#000;border:2px solid #000;border-radius:0}
+  .tot .big{color:#000}.tot .lbl,.tot .brk{color:#333}.tot .brk b{color:#000}
+  @page{margin:16mm}
+}
+@media(max-width:900px){.lg span{display:none}}
+@media(max-width:820px){.g2,.g3,.g4,.mat{grid-template-columns:1fr}.tot{grid-template-columns:1fr}.tabs{overflow-x:auto}}
+/* Wide tables must scroll inside their own card, never clip. Screen only — print
+   lays out at full width and must not be turned into a scroll box. */
+@media screen and (max-width:820px){
+  .card table{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+}
+/* Setup on a phone: he is standing in the yard entering numbers, not reading a report.
+   Keep each captured row to one compact line instead of a full screen of scrolling. */
+@media(max-width:820px){
+  #ohRows .mat{grid-template-columns:1fr auto auto}#mouldRows .mat{grid-template-columns:1fr auto auto}#ohRows .mat,#mouldRows .mat{align-items:center;gap:8px;padding:9px 0}
+  #ohRows .mat>div:nth-child(3),#mouldRows .mat>div:nth-child(4){display:none}
+  #ohRows .mat input,#mouldRows .mat input{width:118px;text-align:right}
+  #ohRows .mat label,#mouldRows .mat label{display:none}
+}
+
+/* Phone. Two things that only show up on a real handset, found 22 September at 375px.
+   1. Every input and select was 14px. iOS Safari zooms the whole page when a field under
+      16px takes focus, so a customer filling an eight-step quote had the page jump and had
+      to pinch back out at every single field.
+   2. Tap targets were 37 to 39px against the 44px a thumb reliably hits. */
+@media(max-width:600px){
+  input,select,textarea{font-size:16px;min-height:44px}
+  .tabs{scroll-snap-type:x proximity}
+  .tab{scroll-snap-align:start;min-height:44px}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="data.js"></script>
+<!-- The published price list, shared with the home page. One copy, one truth. -->
+<script src="../assets/price-list.js"></script>
+</head>
+<body>
+
+<div class="top"><div class="tw">
+  <div class="lg"><div class="lgm">TM</div><div><b>TM Stone</b><span id="modeLbl">QUOTE BUILDER</span></div></div>
+  <div class="tabs">
+    <button class="tab on" data-p="quote">New Quote</button>
+    <button class="tab" data-p="saved">Saved Quotes</button>
+    <button class="tab" data-p="jobs">Jobs &amp; Yard</button>
+    <button class="tab" data-p="stock">Stock</button>
+    <button class="tab" data-p="money">Money</button>
+    <button class="tab internal" data-p="setup">My Costs</button>
+    <button class="tab" data-p="trade">Trade Supply</button>
+    <button class="tab" data-p="materials">Prices &amp; Rates</button>
+  </div>
+</div></div>
+
+<div class="wrap">
+
+<!-- ================= NEW QUOTE ================= -->
+<div class="page on" id="p-quote">
+  <div id="driftBanner"></div>
+
+  <div class="card noprint">
+    <h2>Customer</h2>
+    <div class="sub">Who is this quote for, and where is the job</div>
+    <div class="g3">
+      <div><label>Customer name</label><input id="cname" placeholder="e.g. M. Thabane"></div>
+      <div><label>Phone</label><input id="cphone" placeholder="+266 …"></div>
+      <div><label>Customer type</label><select id="ctype"><option value="retail">Homeowner</option><option value="trade">Trade / contractor</option></select></div>
+    </div>
+    <div style="margin-top:11px"><label>Site address</label><input id="csite" placeholder="e.g. Ha Tsosane, Maseru"></div>
+  </div>
+
+  <div class="card noprint">
+    <h2>Pricing</h2>
+    <div class="sub internal">Mark-up is applied to cost — TM Stone's own convention (cost × 1.40 = 40%)</div>
+    <div class="g3">
+      <div class="internal"><label>Mark-up %</label><input type="number" id="markup" value="40" min="0" step="1"></div>
+      <div><label>Wastage % (cuts &amp; breakage)</label><input type="number" id="wastage" value="5" min="0" step="1"></div>
+      <div><label>Quote valid for (days)</label><input type="number" id="validdays" value="14" min="1" step="1"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Items</h2>
+    <div class="sub">Add each area to be paved</div>
+    <div class="g4 noprint" style="margin-bottom:14px">
+      <div><label>Product</label><select id="lprod"></select></div>
+      <div><label>Area (m²)</label><input type="number" id="larea" value="120" min="0.1" step="0.1"></div>
+      <div><label>Description</label><input id="ldesc" placeholder="e.g. Driveway"></div>
+      <div><button class="btn" onclick="addLine()">Add item</button></div>
+    </div>
+    <table>
+      <thead><tr>
+        <th>Item</th><th class="num">Area m²</th><th class="num">Pavers</th>
+        <th class="num">Unit price</th><th class="num">Total</th><th class="noprint"></th>
+      </tr></thead>
+      <tbody id="lines"><tr><td colspan="6" class="mini" style="padding:18px 10px">No items yet — add one above.</td></tr></tbody>
+    </table>
+  </div>
+
+
+  <div class="card noprint" id="installCard">
+    <h2>Installation</h2>
+    <div class="sub" id="installSub">TM Stone's own rate card — M90/m² all-in, M80–150 by terrain, excavation charged on the side</div>
+
+    <div id="rateWarn"></div>
+
+    <div class="g4" style="margin-bottom:11px">
+      <div><label>Charge installation</label>
+        <select id="imode">
+          <option value="none">Supply only — no installation</option>
+          <option value="per_m2">Lay it — the rate card</option>
+        </select></div>
+      <div><label>Rate (M per m²)</label><input type="number" id="irate" value="90" min="0" step="5"></div>
+      <div><label>TLB hours (excavation, at cost)</label><input type="number" id="itlb" value="0" min="0" step="0.5"></div>
+      <div><label>Override whole charge (M)</label><input type="text" inputmode="decimal" id="ioverride" placeholder="leave blank to use the rate" step="0.01"></div>
+    </div>
+    <div class="g4" style="margin-bottom:14px">
+      <div><label>Crew on this job</label><select id="icrew"></select></div>
+      <div><label>Ground conditions</label><select id="iground"></select></div>
+      <div><label>Transport trips (already in overhead)</label><input type="number" id="itrips" value="0" min="0" step="1"></div>
+      <div></div>
+    </div>
+    <p class="mini" id="groundNote" style="margin:-4px 0 14px"></p>
+
+    <table id="iCompare">
+      <thead><tr><th>Terrain</th><th>Basis</th><th class="num">You charge</th><th class="num internal">Indicative cost</th><th class="num internal">Profit</th><th class="num internal">Margin</th></tr></thead>
+      <tbody id="iRows"></tbody>
+    </table>
+    <p class="mini" id="iNote" style="margin-top:11px"></p>
+  </div>
+
+  <div class="tot">
+    <div>
+      <div class="lbl">Quote total</div>
+      <div class="big" id="qtotal">M0.00</div>
+      <div class="brk" id="qbrk"></div>
+    </div>
+    <div class="noprint" style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn" onclick="saveQuote()">Save quote</button>
+      <button class="btn ghost" onclick="printCurrentQuote()">Print / PDF</button>
+      <button class="btn ghost" onclick="newQuote()">Clear</button>
+    </div>
+  </div>
+  <p class="mini" style="margin-top:12px">Prices are for supply of pavers. Base preparation, edging, transport and installation are quoted after a site measure-up. Quote valid <span id="vdays">14</span> days from issue — after that, input prices are re-checked.</p>
+</div>
+
+<!-- ================= SAVED ================= -->
+<div class="page" id="p-saved">
+  <div id="staleWrap"></div>
+  <div class="card">
+    <h2>Saved quotes</h2>
+    <div class="sub">Every quote stores the material prices it was built on</div>
+    <table>
+      <thead><tr><th>Quote</th><th>Customer</th><th class="num">Total</th><th>Date</th><th>Status</th><th class="internal">Cost base</th><th></th></tr></thead>
+      <tbody id="savedRows"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Move this to a new phone — or to the new address</h2>
+    <div class="sub">Everything on these pages is saved in this browser and nowhere else.
+      A backup file is the only way it travels: to another phone, or to this site's own
+      address once that goes live. Save one before you change either.</div>
+    <div style="margin-top:12px;display:flex;gap:9px;flex-wrap:wrap">
+      <button class="btn" onclick="backupAll()">Save a backup of everything</button>
+      <label class="btn ghost" style="cursor:pointer;margin:0">Load a backup
+        <input type="file" accept="application/json" style="display:none" onchange="restoreAll(event)">
+      </label>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="page" id="p-jobs">
+
+  <div class="card">
+    <h2>Today</h2>
+    <div class="sub">What is happening, what is late, and what the yard should be pouring.
+      This is the screen for whoever is here when you are not.</div>
+    <div id="todayBoard"></div>
+  </div>
+
+  <div class="card">
+    <h2>Production against orders</h2>
+    <div class="sub">You make to order, not to stock — so this is not a stockpile. It is how
+      much of what you have promised is already poured, and how much is still to make.</div>
+    <table><thead><tr><th>Product</th><th class="num">Made</th><th class="num">Promised</th>
+      <th class="num">Still to make</th><th class="num">Good out of the mould</th></tr></thead>
+      <tbody id="stockRows"></tbody></table>
+    <div id="rejectCost"></div>
+  </div>
+
+  <div class="card">
+    <h2>Log today's pour</h2>
+    <div class="sub">One line a day from the yard. Rejects matter — a broken paver used the
+      same cement as a good one.</div>
+    <div class="g4">
+      <div><label>Date</label><input type="date" id="r_date"></div>
+      <div><label>Product</label><select id="r_prod"></select></div>
+      <div><label>Batches poured</label><input type="number" id="r_batches" step="0.5" min="0.5" value="2"></div>
+      <div><label>Logged by</label><input id="r_by" placeholder="name"></div>
+    </div>
+    <div class="g3" style="margin-top:10px">
+      <div><label>Good pavers</label><input type="number" id="r_good" min="0" step="1"></div>
+      <div><label>Broken / rejected</label><input type="number" id="r_reject" min="0" step="1" value="0"></div>
+      <div style="display:flex;align-items:flex-end"><button class="btn" onclick="logRun()">Log the pour</button></div>
+    </div>
+    <p class="mini" id="runHint" style="margin-top:9px"></p>
+    <div id="runRows" style="margin-top:14px"></div>
+  </div>
+
+  <div class="card">
+    <h2>Jobs</h2>
+    <div class="sub">Every accepted job, who is on it, and whether the promise can actually be kept.</div>
+    <div class="g4">
+      <div><label>From a saved quote</label><select id="j_quote"></select></div>
+      <div><label>Crew</label><select id="j_crew"></select></div>
+      <div><label>Ground</label><select id="j_ground"></select></div>
+      <div><label>Promised finish</label><input type="date" id="j_end"></div>
+    </div>
+    <div style="margin-top:11px"><button class="btn" onclick="addJob()">Create the job</button></div>
+    <div id="jobRows" style="margin-top:16px"></div>
+  </div>
+
+</div>
+
+
+<div class="page" id="p-stock">
+
+  <div class="card">
+    <h2>Do I order today?</h2>
+    <div class="sub">Worked out from what you poured, not from counting. Every batch you log
+      eats the recipe, so the system already knows what is left.</div>
+    <div id="reorderRows"></div>
+  </div>
+
+  <div class="card">
+    <h2>What the jobs you have already promised will eat</h2>
+    <div class="sub">The shortfall nobody sees until the mixer stops.</div>
+    <table><thead><tr><th>Material</th><th class="num">Needed</th><th class="num">On hand</th>
+      <th class="num">Short by</th></tr></thead><tbody id="committedRows"></tbody></table>
+  </div>
+
+  <div class="card">
+    <h2>Book in a delivery</h2>
+    <div class="sub">This is also how prices get updated. What you actually paid becomes the
+      price every new quote is built on — and any quote still out on the old price gets flagged.</div>
+    <div class="g4">
+      <div><label>Date</label><input type="date" id="d_date"></div>
+      <div><label>Material</label><select id="d_mat"></select></div>
+      <div><label>Quantity</label><input type="text" inputmode="decimal" id="d_qty" step="0.5" min="0"></div>
+      <div><label>Total paid (M)</label><input type="text" inputmode="decimal" id="d_paid" step="10" min="0"></div>
+    </div>
+    <div class="g3" style="margin-top:10px">
+      <div><label>Invoice no.</label><input id="d_inv"></div>
+      <div><label>Booked in by</label><input id="d_by" placeholder="name"></div>
+      <div style="display:flex;align-items:flex-end"><button class="btn" onclick="logDelivery()">Book it in</button></div>
+    </div>
+    <p class="mini" id="d_hint" style="margin-top:9px"></p>
+    <div id="deliveryRows" style="margin-top:14px"></div>
+  </div>
+
+  <div class="card">
+    <h2>Opening stock and suppliers</h2>
+    <div class="sub">Set this once. After that the system keeps count for you — only correct it
+      if you do a physical count and it disagrees.</div>
+    <div id="stockSetRows"></div>
+  </div>
+
+</div>
+
+
+<div class="page" id="p-money">
+
+  <div id="invWarn"></div>
+
+  <div class="card">
+    <h2>Where your money is</h2>
+    <div class="sub">Invoiced, collected, and what is still out there.</div>
+    <div class="tot" id="cashTot"></div>
+    <table style="margin-top:14px"><thead><tr><th>How old</th><th class="num">Invoices</th>
+      <th class="num">Owed</th></tr></thead><tbody id="agingRows"></tbody></table>
+  </div>
+
+  <div class="card">
+    <h2>Work you finished and never invoiced</h2>
+    <div class="sub">For a business this size this is the most common way money is simply lost.</div>
+    <div id="leakRows"></div>
+  </div>
+
+  <div class="card">
+    <h2>Raise an invoice</h2>
+    <div class="g4">
+      <div><label>For which job</label><select id="i_job"></select></div>
+      <div><label>Type</label><select id="i_kind">
+        <option value="final">Final — the whole job</option>
+        <option value="deposit">Deposit before starting</option>
+        <option value="progress">Progress payment</option></select></div>
+      <div><label>Percent of the job</label><input type="number" id="i_pct" value="100" min="1" max="100" step="5"></div>
+      <div><label>Payment terms (days)</label><input type="number" id="i_terms" min="0" step="1"></div>
+    </div>
+    <p class="mini" id="i_hint" style="margin-top:9px"></p>
+    <div style="margin-top:11px"><button class="btn" onclick="raiseInvoice()">Raise it</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Invoices</h2>
+    <div id="invRows"></div>
+  </div>
+
+  <div class="card">
+    <h2>Your invoice details</h2>
+    <div class="sub">These print on every invoice. Nothing here is guessed — fill in what is true
+      for TM Stone.</div>
+    <div class="g3">
+      <div><label>VAT registered?</label><select id="s_vatreg">
+        <option value="no">No — do not show VAT</option>
+        <option value="yes">Yes — add VAT</option></select></div>
+      <div><label>VAT number</label><input id="s_vatno" placeholder="only if registered"></div>
+      <div><label>VAT rate %</label><input type="number" id="s_vatrate" step="0.5"></div>
+    </div>
+    <div class="g4" style="margin-top:10px">
+      <div><label>Bank</label><input id="s_bank"></div>
+      <div><label>Account name</label><input id="s_accname"></div>
+      <div><label>Account number</label><input id="s_accno"></div>
+      <div><label>Branch code</label><input id="s_branch"></div>
+    </div>
+    <div class="g3" style="margin-top:10px">
+      <div><label>Standard terms (days)</label><input type="number" id="s_terms" min="0"></div>
+      <div><label>Deposit %</label><input type="number" id="s_dep" min="0" max="100"></div>
+      <div style="display:flex;align-items:flex-end"><button class="btn" onclick="saveInvSettings()">Save</button></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="page internal" id="p-setup">
+  <div class="alert a-ok" style="margin-bottom:14px">
+    <b>Everything else in this system is calculated from what you enter here.</b>
+    Nothing is fixed in the code. Change a number and every price, quote, price list and
+    trade rate moves with it. Leave a section blank and the system keeps using the figure
+    from your existing cost sheet — so nothing breaks while you fill it in.
+  </div>
+
+  <div class="card">
+    <h2>What the yard costs to run</h2>
+    <div class="sub">Monthly costs that are not materials. These are spread across everything you make.</div>
+    <div id="ohRows"></div>
+    <div class="g4" style="margin-top:12px">
+      <div><label>Cost name</label><input id="oh_name" placeholder="e.g. Yard rent"></div>
+      <div><label>Category</label><select id="oh_cat"><option>fixed</option><option>labour</option><option>utilities</option><option>equipment</option><option>other</option></select></div>
+      <div><label>Per month (M)</label><input type="text" inputmode="decimal" id="oh_amt" step="50" min="0"></div>
+      <div><button class="btn" onclick="addOverhead()">Add</button></div>
+    </div>
+    <div class="tot" style="margin-top:16px">
+      <div><div class="lbl">Total monthly overhead</div><div class="big" id="ohTotal">M0.00</div>
+      <div class="brk" id="ohNote"></div></div>
+    </div>
+    <div id="ohCompare"></div>
+  </div>
+
+  <div class="card">
+    <h2>How much you make in a month</h2>
+    <div class="sub">This is what the overhead is divided by. Be honest — optimistic output hides real cost.</div>
+    <div class="g3">
+      <div><label>Working days per month</label><input type="number" id="cap_days" min="1" step="1"></div>
+      <div><label>Batches per day</label><input type="number" id="cap_batches" min="0.5" step="0.5"></div>
+      <div><label>Batch yield (litres of product)</label><input type="number" id="cap_yield" min="1" step="1"></div>
+    </div>
+    <p class="mini" id="capNote" style="margin-top:10px"></p>
+  </div>
+
+  <div class="card">
+    <h2>Batch recipe</h2>
+    <div class="sub">What goes into one batch. Change the mix and every material cost recalculates.</div>
+    <div class="g4">
+      <div><label>Cement (50 kg bags)</label><input type="number" id="br_cem" step="0.05" min="0"></div>
+      <div><label>Sand (litres)</label><input type="number" id="br_sand" step="5" min="0"></div>
+      <div><label>Stone (litres)</label><input type="number" id="br_stone" step="5" min="0"></div>
+      <div><label>Pigment (kg)</label><input type="number" id="br_pig" step="0.05" min="0"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Moulds</h2>
+    <div class="sub">A mould wears out. Its cost divided by how many casts it survives is a real cost per paver.</div>
+    <div id="mouldRows"></div>
+    <div class="g4" style="margin-top:12px">
+      <div><label>Product</label><select id="md_prod"></select></div>
+      <div><label>Mould cost (M)</label><input type="text" inputmode="decimal" id="md_cost" step="100" min="0"></div>
+      <div><label>Expected pours</label><input type="number" id="md_pours" step="1000" min="1" value="20000"></div>
+      <div><button class="btn" onclick="addMould()">Add mould</button></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Supplier measures</h2>
+    <div class="sub">Only change these if your supplier delivers differently.</div>
+    <div class="g4">
+      <div><label>Sand load size (m³)</label><input type="number" id="k_sand" step="0.5" min="0.5"></div>
+      <div><label>Stone density (t/m³)</label><input type="number" id="k_stone" step="0.05" min="0.5"></div>
+      <div><label>Pigment bag (kg)</label><input type="number" id="k_pig" step="1" min="1"></div>
+      <div><label>Cement bag (kg)</label><input type="number" id="k_cem" step="1" min="1"></div>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:9px;flex-wrap:wrap">
+      <button class="btn" onclick="saveSetup()">Save all setup</button>
+      <button class="btn ghost" onclick="resetSetup()">Reset to Aug 2026 figures</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Where every price comes from</h2>
+    <div class="sub">The full working for one paver, from what you entered above. Nothing hidden.</div>
+    <div class="g2" style="margin-bottom:14px">
+      <div><label>Product</label><select id="wk_prod"></select></div>
+      <div><label>Mark-up %</label><input type="number" id="wk_markup" value="40" step="1"></div>
+    </div>
+    <table><thead><tr><th>Component</th><th class="num">Per paver</th><th>How it is worked out</th></tr></thead>
+      <tbody id="wkRows"></tbody></table>
+  </div>
+
+  <div class="card" id="shareCard">
+    <h2>Send these numbers to Jakote</h2>
+    <div class="sub" id="shareWhere"></div>
+    <div id="sharePreview"></div>
+    <div style="margin-top:14px;display:flex;gap:9px;flex-wrap:wrap">
+      <button class="btn" onclick="shareNumbers()">Send my numbers on WhatsApp</button>
+      <button class="btn ghost" onclick="backupSetup()">Save a backup file</button>
+      <label class="btn ghost" style="cursor:pointer;margin:0">Load a backup
+        <input type="file" accept="application/json" style="display:none" onchange="restoreSetup(event)">
+      </label>
+    </div>
+    <p class="mini" style="margin-top:10px">Nothing is sent automatically. The button opens WhatsApp
+      with the message written out — you read it and press send yourself.</p>
+  </div>
+</div>
+
+<div class="page" id="p-trade">
+  <div class="card">
+    <h2>Trade supply — manufacturing for other pavers</h2>
+    <div class="sub">Other contractors buy your pavers and lay them themselves. No labour, no site risk — volume instead.</div>
+    <div class="alert a-ok" style="margin-bottom:16px">
+      <b>Why this line is worth having.</b> On installed work you earn on pavers <i>and</i> labour, but you can only lay
+      one job at a time. On trade supply you earn less per m² and carry no site risk — and the yard can run flat out.
+      One contractor buying 500 m² a month is worth more than chasing five driveways.
+    </div>
+    <div class="g3">
+      <div><label>Order size (m²)</label><input type="number" id="tArea" value="500" min="1" step="10"></div>
+      <div><label>Product</label><select id="tProd"></select></div>
+      <div><label>Compare against installed job at</label><input type="number" id="tCompare" value="40" step="1"> </div>
+    </div>
+    <div id="tierBox" style="margin-top:18px"></div>
+  </div>
+
+  <div class="card">
+    <h2>Trade price list</h2>
+    <div class="sub">At today's material costs. Print this and leave it with every contractor in Maseru.</div>
+    <table><thead><tr><th>Product</th><th>Tier</th><th class="num">From (m²)</th><th class="num">Per paver</th><th class="num">Per m²</th><th>Terms</th></tr></thead>
+      <tbody id="tListRows"></tbody></table>
+    <div style="margin-top:14px" class="noprint"><button class="btn ghost" onclick="printPriceList()">Print price list</button></div>
+    <p class="mini" style="margin-top:10px">Prices ex-yard, collection by the buyer. Delivery quoted separately. Valid while material costs hold — reprint when cement moves.</p>
+  </div>
+
+  <div class="card noprint internal">
+    <h2>Trade tiers</h2>
+    <div class="sub">Volume unlocks a better rate. Set the mark-up you are willing to give at each level.</div>
+    <div id="tierEdit"></div>
+    <button class="btn" style="margin-top:12px" onclick="saveTiers()">Save tiers</button>
+  </div>
+</div>
+
+<!-- ================= MATERIALS ================= -->
+<div class="page" id="p-materials">
+  <div class="card internal">
+    <h2>Material prices</h2>
+    <div class="sub">Change a price here and every product, quote and price list updates immediately</div>
+    <div id="matRows"></div>
+    <div style="margin-top:16px;display:flex;gap:9px;flex-wrap:wrap">
+      <button class="btn" onclick="saveMaterials()">Save prices</button>
+      <button class="btn ghost" onclick="resetMaterials()">Reset to August 2026 baseline</button>
+    </div>
+  </div>
+
+
+  <div class="card">
+    <h2>Crews</h2>
+    <div class="sub">Your teams and how fast they lay. Add as many as you run.</div>
+    <div id="crewRows"></div>
+    <div class="g4" style="margin-top:14px">
+      <div><label>Crew name</label><input id="nc_name" placeholder="e.g. Team A"></div>
+      <div><label>People</label><input type="number" id="nc_size" value="4" min="1"></div>
+      <div><label>m² per day (normal ground)</label><input type="number" id="nc_speed" value="45" min="1" step="1"></div>
+      <div><button class="btn" onclick="addCrew()">Add crew</button></div>
+    </div>
+    <p class="mini" style="margin-top:10px">PUBLIC BUILD: what a crew is paid is not held in this copy. Crew size and laying
+      speed are told to the customer anyway; the day rate is a cost, and installation here is priced off the
+      rate card, not off crew cost. Laying speed is set per crew on normal ground, then adjusted by the site
+      conditions on each quote.</p>
+  </div>
+
+  <div class="card">
+    <h2>Ground conditions</h2>
+    <div class="sub">The same crew lays far less on bad ground. These factors are what stop a quote going wrong.</div>
+    <div id="groundRows"></div>
+    <button class="btn" style="margin-top:12px" onclick="saveGround()">Save ground factors</button>
+  </div>
+
+  <div class="card">
+    <h2>Installation rate card</h2>
+    <div class="sub">TM Stone's own rates, given 14 October 2026. Selling rates only — no cost is held in this copy.</div>
+    <div class="g3">
+      <div><label>Normal rate (M per m², all-in)</label><input type="text" inputmode="decimal" id="s_rate" step="5" min="0"></div>
+      <div><label>Easy terrain (M per m²)</label><input type="text" inputmode="decimal" id="s_min" step="5" min="0"></div>
+      <div><label>Hard terrain (M per m²)</label><input type="text" inputmode="decimal" id="s_max" step="5" min="0"></div>
+    </div>
+    <div class="g3" style="margin-top:11px">
+      <div><label>TLB hire (M per hour, charged on)</label><input type="text" inputmode="decimal" id="s_tlb" step="50" min="0"></div>
+      <div><label>Trip to site (M)</label><input type="text" inputmode="decimal" id="s_trip" step="10" min="0"></div>
+      <div></div>
+    </div>
+    <p class="mini" style="margin-top:11px">The rate covers levelling, bedding sand, paving and finishes. Excavation is not in
+      it — TLB is charged by the hour at what it costs. Change any rate here and the banner above the
+      installation table will say the figures are no longer the rate card as given.</p>
+    <div style="margin-top:14px;display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+      <button class="btn" onclick="saveInstall()">Save rate card</button>
+      <button class="btn ghost" onclick="resetInstall()">Back to the rate card</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Price list — all products</h2>
+    <div class="sub internal">At the current material prices and <span id="plMarkup">40</span>% mark-up</div>
+    <table>
+      <thead><tr><th>Product</th><th class="num internal">Per batch</th><th class="num internal">Material</th><th class="num internal">Cost</th><th class="num">Sell</th><th class="num">Per m²</th></tr></thead>
+      <tbody id="plRows"></tbody>
+    </table>
+    <p class="mini internal" style="margin-top:12px">Overhead and mould depreciation per unit are carried from the SQ200 batch model. Confirm them for other sizes before quoting large trade volumes. The figures themselves are in the owner's copy, not in this one.</p>
+  </div>
+</div>
+
+</div>
+
+<script>
+/* ============================================================
+   TM Stone quote builder — PUBLIC BUILD, PRICE LIST ONLY
+   ------------------------------------------------------------
+   This file is served from a PUBLIC repository at a PUBLIC URL. It therefore
+   carries NO cost inputs. Removed on 14 Oct 2026: the four supplier prices
+   (cement per bag, river sand per load, crushed stone per tonne, oxide per
+   bag), the mix design (bags and litres per batch, batch yield), overhead and
+   mould depreciation per paver, and crew pay per person per day.
+
+   SECOND PASS, later the same day (MEN-134 (c)): the whole INSTALLATION cost
+   model went with it — crew day cost, bedding sand per m², base preparation
+   per m², transport per trip, and the laying days the first three were
+   multiplied by. Installation is now priced from TM Stone's own rate card
+   (M90/m², M80–150 by terrain, TLB M800/hour, M150 a trip), which is a
+   selling price and customer-facing by definition. The laying rate no longer
+   moves with the paver mark-up control. See the INSTALLATION block below for
+   what that changed and why.
+
+   What it carries instead is PRICE_LIST below — TM Stone's own published
+   selling prices, which are customer-facing by definition. Every screen that
+   used to derive a price from costs now reads that list. The prices a customer
+   sees are byte-for-byte what they were before this change; only the way they
+   are arrived at has changed.
+
+   ⚠️ DO NOT paste cost figures back into this file, and do not sync it from
+      the owner's copy in mend-group-hq (clients/tm-stone/erp/ui/index.html).
+      The two have diverged on purpose. The owner's copy keeps the full cost
+      engine; this one must never see it.
+
+   ⚠️ RESIDUAL, stated honestly rather than hidden. A page that lets the user
+      choose a mark-up % always allows cost = price ÷ (1 + mark-up/100).
+      Removing that last inference means replacing the mark-up control with a
+      discount-off-list control, which changes how TM Stone quotes — a client
+      decision, not a technical one. It is NOT closed by this file.
+      The same figures also remain in this repository's git history.
+
+   ⚠️ MARK-UP on list (×1.40 at the reference), never margin (÷0.60).
+   Storage is localStorage for now; swap for Supabase on go-live.
+   ============================================================ */
+
+/* The published list, and the mark-up it is quoted at. Any other mark-up is
+   scaled off the list, which is exactly what multiplying the old cost by
+   (1 + m/100) did — same number, no cost in the file.
+
+   ⚠️ THE LIST IS NOT IN THIS FILE. It is ../assets/price-list.js, loaded above,
+      and the home page reads the same file. This page used to carry its own
+      copy and the two drifted: M147.97/m² here against M159.93/m² on the home
+      page, for the same SQ200. Ruled 14 Oct 2026 — one list, his published one.
+      Do not paste numbers back in; tests/price-parity.test.js will fail. */
+const PRICE_REF_MARKUP = window.TMS_PRICE_REF_MARKUP;
+const PRICE_LIST = window.TMS_PRICE_LIST;
+const listPrice = (code, markup) => {
+  const listed = PRICE_LIST[code];
+  if (listed == null) return 0;
+  return markup === PRICE_REF_MARKUP
+    ? listed
+    : listed * (1 + markup / 100) / (1 + PRICE_REF_MARKUP / 100);
+};
+
+/* Material codes are still needed — the stock module tracks deliveries of them.
+   What he pays for them is not shipped; he enters it on his own device and it
+   stays in his own browser. */
+const MATERIAL_CODES = ['CEMENT', 'SAND', 'STONE', 'PIGMENT'];
+/* Face area comes from the shared list too — price ÷ face is the per-m² figure a
+   customer compares between the two pages, so a face that drifted would make
+   them disagree just as surely as a price that drifted. litres is this page's
+   own (it sizes a batch, it is not a price) and stays here. */
+const PRODUCTS = [
+  { code:'SQ200', name:'200 × 200 × 50 mm Square', litres:2.0,  face:window.TMS_FACE_M2.SQ200  },
+  { code:'SQ100', name:'100 × 100 × 50 mm Square', litres:0.5,  face:window.TMS_FACE_M2.SQ100  },
+  { code:'BR220', name:'220 × 110 × 50 mm Brick',  litres:1.21, face:window.TMS_FACE_M2.BR220  },
+  { code:'HEX200',name:'Hexagon 200 × 50 mm',      litres:1.30, face:window.TMS_FACE_M2.HEX200 },
+];
+/* ══════════════════════════════════════════════════════════════════════════
+   SHOW_INTERNAL_COSTS — the single switch that makes this page safe to share.
+
+   true  (how it ships today, nothing changes for Thulo or Jakote):
+         the full owner's view — cost per paver, material/overhead/mould
+         breakdown, gross profit, mark-up %, installation cost/profit/margin,
+         supplier prices, the whole "My Costs" capture screen, the trade
+         mark-up tiers and the cost-drift banners.
+
+   false: every one of those figures disappears — from the screen AND from
+         anything printed. What is left still works end to end: prices, the
+         quote builder, saved quotes, jobs, production, stock, deliveries and
+         invoicing. The arithmetic is untouched; only the display changes.
+
+   WHY IT EXISTS. https://jakote.github.io/tm-stone-preview/quote/ is a PUBLIC
+   URL. As it stands, it publishes TM Stone's material cost per paver, overhead
+   per paver, mould depreciation, total cost, gross profit and the prices he
+   pays his suppliers — his competitive position — to anyone with the link.
+   Flipping this one line to false makes the page safe to hand to a contractor.
+
+   It is deliberately left true: Thulo has not been asked yet, so nothing of
+   his has been deleted. Ask him, then decide.
+
+   WAS A LIMIT, NOW LARGELY CLOSED (14 Oct 2026): this switch only ever hid the
+   figures from the rendered page and from print — the numbers themselves still
+   sat in this file's JavaScript, readable by anyone who opened "view source".
+   The cost inputs have now been removed from the source itself; see the
+   PUBLIC BUILD note at the top of this script for what is gone and what the
+   one remaining inference is.
+   ══════════════════════════════════════════════════════════════════════════ */
+const SHOW_INTERNAL_COSTS = false;
+
+/* ic(html) emits internal-only markup — nothing at all when the switch is off.
+   Static blocks use the .internal CSS class instead; both are driven by the
+   one constant above. */
+const ic = html => SHOW_INTERNAL_COSTS ? html : '';
+
+const LS_MAT='tms_materials', LS_Q='tms_quotes';
+const $=id=>document.getElementById(id);
+const M=n=>'M'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+/* Storage must never take the app down. localStorage throws in private
+   browsing and in restricted contexts; the quote screen still has to work. */
+const store = {
+  get(k, fallback){
+    try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; }
+    catch(e){ return fallback; }
+  },
+  set(k, v){
+    try { localStorage.setItem(k, JSON.stringify(v)); return true; }
+    catch(e){ console.warn('Storage unavailable — this session will not persist.'); return false; }
+  }
+};
+
+/* ---------- document numbering ----------
+   Quote, job and invoice numbers used to be `array.length + 1`. Save two quotes,
+   delete the first, save a third and two different customers both hold TMS-0002.
+   It also breaks the Supabase import: quotes.quote_no and invoices.invoice_no are
+   `text unique not null`.
+
+   The counter is STORED and only ever increases. It is never derived from the
+   length of an array, so deleting a record cannot hand its number to the next one.
+   Numbers may therefore have gaps — that is correct, a gap is a deleted document.
+
+   Migration: on the first call the stored counter is lifted above the highest
+   number already issued in the existing records, so saved quotes/jobs/invoices
+   keep the numbers their customers already have. The same max() runs on every
+   call, so a restored backup or an imported record can never collide either. */
+const SEQ_KEYS = { quote:'tms_seq_quote', job:'tms_seq_job', invoice:'tms_seq_invoice' };
+const trailingNo = v => { const m = String(v == null ? '' : v).match(/(\d+)\s*$/); return m ? parseInt(m[1], 10) : 0; };
+function seqNext(kind, records, field){
+  const key = SEQ_KEYS[kind];
+  let n = parseInt(store.get(key, 0), 10) || 0;
+  const highestIssued = (records || []).reduce((max, r) => Math.max(max, trailingNo(r && r[field])), 0);
+  if (highestIssued > n) n = highestIssued;      // seed above what is already out there
+  n += 1;
+  store.set(key, n);
+  return n;
+}
+
+/* Supplier prices are NOT shipped in the public build. Whatever he enters on his
+   own device is kept on his own device; an empty object means "he has not told
+   this copy yet", which the stock screen says in words rather than guessing. */
+let materials = store.get(LS_MAT, null) || {};
+let quotes    = store.get(LS_Q, []);
+let lines     = [];
+
+/* PUBLIC BUILD: there is no batch cost here. Kept as a named no-op so the few
+   callers that used to ask for one get a defined answer instead of throwing. */
+function batchCost(){ return null; }
+
+/* PUBLIC BUILD: price comes from the published list, not from a cost build-up.
+   `prices` is accepted and ignored — the signature is unchanged so every caller,
+   including the saved-quote replay that passes an old price snapshot, still works. */
+function unitCosting(prod, prices, markup){
+  const price = listPrice(prod.code, markup);
+  return { perBatch:null, material:null, overhead:null, mould:null,
+           cost:null, price, perM2: price/prod.face };
+}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on'); $('p-'+t.dataset.p).classList.add('on');
+  if(t.dataset.p==='saved') renderSaved();
+  if(t.dataset.p==='materials'){ renderMaterials(); renderPriceList(); renderCrews(); renderGround(); }
+  if(t.dataset.p==='trade'){ renderTrade(); }
+  if(t.dataset.p==='setup'){ renderSetup(); }
+  if(t.dataset.p==='jobs'){ renderJobsPage(); }
+  if(t.dataset.p==='stock'){ renderStockPage(); }
+  if(t.dataset.p==='money'){ renderMoney(); }
+});
+
+/* ---------- quote lines ---------- */
+$('lprod').innerHTML = PRODUCTS.map(p=>`<option value="${p.code}">${p.name}</option>`).join('');
+
+function addLine(){
+  const code=$('lprod').value, area=parseFloat($('larea').value);
+  if(!area||area<=0){ alert('Enter an area in m².'); return; }
+  const prod=PRODUCTS.find(p=>p.code===code);
+  lines.push({ code, name:prod.name, desc:$('ldesc').value.trim()||prod.name, area });
+  $('ldesc').value=''; renderLines();
+}
+function delLine(i){ lines.splice(i,1); renderLines(); }
+
+function renderLines(){
+  const markup=+$('markup').value||0, wast=+$('wastage').value||0;
+  $('vdays').textContent=$('validdays').value||14;
+  const tb=$('lines');
+  if(!lines.length){
+    tb.innerHTML='<tr><td colspan="6" class="mini" style="padding:18px 10px">No items yet — add one above.</td></tr>';
+    $('qtotal').textContent='M0.00'; $('qbrk').innerHTML=''; return;
+  }
+  let total=0, cost=0, units=0, area=0;
+  tb.innerHTML = lines.map((l,i)=>{
+    const prod=PRODUCTS.find(p=>p.code===l.code);
+    const c=unitCosting(prod, materials, markup);
+    const u=Math.ceil((l.area/prod.face)*(1+wast/100));
+    const lt=u*c.price;
+    total+=lt; cost+=u*c.cost; units+=u; area+=l.area;
+    return `<tr><td><b>${l.desc}</b><div class="mini">${prod.name}</div></td>
+      <td class="num">${l.area.toFixed(1)}</td>
+      <td class="num">${u.toLocaleString('en-US')}</td>
+      <td class="num">${M(c.price)}</td>
+      <td class="num"><b>${M(lt)}</b></td>
+      <td class="noprint"><button class="btn dgr sm" onclick="delLine(${i})">Remove</button></td></tr>`;
+  }).join('');
+  const ins = (typeof currentInstall==='function') ? currentInstall() : {charge:0,cost:0,mode:'none'};
+  total += ins.charge; cost += ins.cost;
+  $('qtotal').textContent=M(total);
+  const profit=total-cost;
+  $('qbrk').innerHTML =
+    `${area.toFixed(1)} m² · ${units.toLocaleString('en-US')} pavers · incl. ${wast}% wastage<br>`+
+    ic(`Cost to make <b>${M(cost)}</b> · Gross profit <b>${M(profit)}</b> (${(profit/total*100).toFixed(1)}% of price)<br>`)+
+    `Average <b>${M(total/(area||1))}</b> per m²` +
+    (ins.mode!=='none' ? `<br>Installation (${ins.mode.replace('_',' ')}): <b>${M(ins.charge)}</b>` : '<br>Supply only — installation not included');
+  checkDrift();
+  if (typeof renderInstall==='function') renderInstall();
+}
+['markup','wastage','validdays'].forEach(id=>$(id).addEventListener('input',renderLines));
+
+/* ---------- drift warning on the quoting screen ----------
+   REMOVED IN THE PUBLIC BUILD. The banner compared today's supplier prices
+   against an August baseline, so it was a statement about his input costs and
+   needed both of those numbers in this file. Neither is shipped any more. The
+   feature lives on in the owner's copy; here the element stays empty.         */
+function checkDrift(){
+  const b=$('driftBanner'); if(b) b.innerHTML='';
+}
+
+/* ---------- save / list ---------- */
+function saveQuote(){
+  if(!lines.length){ alert('Add at least one item first.'); return; }
+  if(!$('cname').value.trim()){ alert('Enter a customer name.'); return; }
+  const markup=+$('markup').value||0, wast=+$('wastage').value||0;
+  let total=0;
+  const ql=lines.map(l=>{
+    const prod=PRODUCTS.find(p=>p.code===l.code);
+    const c=unitCosting(prod, materials, markup);
+    const u=Math.ceil((l.area/prod.face)*(1+wast/100));
+    total+=u*c.price;
+    return {...l, units:u, unit_cost:c.cost, unit_price:c.price, line_total:u*c.price};
+  });
+  // The on-screen total includes installation. Recomputing from lines alone dropped it,
+  // so a saved — and printed — quote could be thousands of Maloti short of what he quoted.
+  const ins = currentInstall();
+  total += ins.charge;
+  // ONE number, issued once, used for the record and for the message — never two
+  // copies of the same expression that could drift apart.
+  const quote_no = 'TMS-' + String(seqNext('quote', quotes, 'quote_no')).padStart(4,'0');
+  quotes.unshift({
+    quote_no,
+    customer:$('cname').value.trim(), phone:$('cphone').value.trim(),
+    type:$('ctype').value, site:$('csite').value.trim(),
+    markup, wastage:wast, lines:ql, total,
+    install: { mode:ins.mode, charge:ins.charge, cost:ins.cost, days:ins.days, basis:ins.basis||'' },
+    cost_basis:{},                      // PUBLIC BUILD: no supplier prices to snapshot
+    status:'draft', created:new Date().toISOString(),
+    valid_days:+$('validdays').value||14
+  });
+  store.set(LS_Q, quotes);
+  alert('Saved as ' + quote_no);
+  renderSaved();
+}
+function newQuote(){ lines=[]; ['cname','cphone','csite','ldesc'].forEach(i=>$(i).value=''); renderLines(); }
+function setStatus(i,s){ quotes[i].status=s; store.set(LS_Q, quotes); renderSaved(); }
+function delQuote(i){ if(confirm('Delete this quote?')){ quotes.splice(i,1); store.set(LS_Q, quotes); renderSaved(); } }
+
+function renderSaved(){
+  const tb=$('savedRows'), sw=$('staleWrap');
+  if(!quotes.length){
+    tb.innerHTML='<tr><td colspan="7" class="mini" style="padding:18px 10px">No saved quotes yet.</td></tr>';
+    sw.innerHTML=''; return;
+  }
+  tb.innerHTML=quotes.map((q,i)=>{
+    // PUBLIC BUILD: staleness compared a quote's cost basis against today's supplier
+    // prices. Neither is in this file now, so the column is left blank rather than
+    // computing a drift of zero and claiming the quote is still good.
+    return `<tr>
+      <td><b>${q.quote_no}</b></td>
+      <td>${q.customer}<div class="mini">${q.site||''}</div></td>
+      <td class="num"><b>${M(q.total)}</b></td>
+      <td>${new Date(q.created).toLocaleDateString('en-ZA')}</td>
+      <td><span class="pill p-${q.status}">${q.status}</span></td>
+      <td class="internal"></td>
+      <td class="noprint" style="white-space:nowrap">
+        ${q.status==='draft'?`<button class="btn sm" onclick="setStatus(${i},'sent')">Mark sent</button> `:''}
+        ${q.status==='sent'?`<button class="btn sm" onclick="setStatus(${i},'accepted')">Accepted</button> `:''}
+        <button class="btn sm" onclick="printSavedQuote(${i})">Print</button>
+        <button class="btn dgr sm" onclick="delQuote(${i})">Delete</button>
+      </td></tr>`;
+  }).join('');
+  sw.innerHTML = '';   // PUBLIC BUILD: stale-quote exposure is a cost statement
+}
+
+/* ---------- materials ---------- */
+const MATNAMES={CEMENT:['Cement','50 kg bag'],SAND:['River sand','12 m³ load'],STONE:['Crushed stone','ton'],PIGMENT:['Oxide pigment','25 kg bag']};
+/* PUBLIC BUILD. What he pays his suppliers is the single most sensitive number
+   in this system, so no baseline is shipped and no price is pre-filled. The
+   screen still works: anything he types is saved to HIS browser only, is used
+   by the stock screen to value a delivery, and never leaves his device.
+   Selling prices no longer move when these change — they come from the
+   published list — which is stated on the card instead of being discovered. */
+function renderMaterials(){
+  const el=$('matRows'); if(!el) return;
+  el.innerHTML=MATERIAL_CODES.map(k=>{
+    const have = materials[k] != null && materials[k] !== '';
+    return `<div class="mat">
+      <div><b>${MATNAMES[k][0]}</b><div class="mini">per ${MATNAMES[k][1]}</div></div>
+      <div><label>What you pay (M)</label><input type="text" inputmode="decimal" id="m_${k}" value="${have?materials[k]:''}" placeholder="not entered" oninput="livePrice()"></div>
+      <div class="mini" style="padding-bottom:10px">Kept on this device only. Used to value stock; your selling prices do not change.</div>
+      <div></div>
+    </div>`;
+  }).join('');
+}
+function livePrice(){ renderPriceList(); }   // selling prices no longer depend on these
+function saveMaterials(){
+  const bad=[];
+  MATERIAL_CODES.forEach(k=>{
+    const raw = ($('m_'+k) ? $('m_'+k).value : '').trim();
+    if (raw === '') { delete materials[k]; return; }   // blank means "not told", not zero
+    const v = parseMoney(raw);
+    if (v==null) bad.push(k); else materials[k]=v;
+  });
+  store.set(LS_MAT, materials);
+  renderMaterials(); renderPriceList(); renderLines();
+  alert(bad.length
+    ? 'Saved — but could not read: ' + bad.join(', ') + '. Those were left unchanged.'
+    : 'Saved to this device. Used for stock values; selling prices are unchanged.');
+}
+function resetMaterials(){
+  materials={}; store.set(LS_MAT, materials);
+  renderMaterials(); renderPriceList(); renderLines();
+}
+function renderPriceList(tmp){
+  const p=tmp||materials, markup=+$('markup').value||40;
+  $('plMarkup').textContent=markup;
+  // PUBLIC BUILD: the three internal columns (pavers per batch, material, cost)
+  // are emitted empty. They were CSS-hidden before, but the numbers were still
+  // written into the DOM and so into any "save page as" or scrape.
+  $('plRows').innerHTML=PRODUCTS.map(prod=>{
+    const c=unitCosting(prod,p,markup);
+    return `<tr><td><b>${prod.code}</b><div class="mini">${prod.name}</div></td>
+      <td class="num internal"></td>
+      <td class="num internal"></td><td class="num internal"></td>
+      <td class="num"><b>${M(c.price)}</b></td><td class="num"><b>${M(c.perM2)}</b></td></tr>`;
+  }).join('');
+}
+
+
+/* ============ INSTALLATION — HIS RATE CARD, PRICE SIDE ONLY ============
+   REPLACED 14 Oct 2026 (MEN-134 (c)). What was here before was a COST model —
+   crew pay, bedding sand per m², base preparation per m², transport per trip —
+   marked up by whatever the paver mark-up control said. Every one of those four
+   figures was invented by MEND, not given by TM Stone, and the mark-up control
+   moved the laying rate with it: M96.33/m² at 28%, M110.89 at 40%, M114.90 at
+   55%. On a 120 m² job at 40% that quoted M13,307 against the M10,800 his own
+   rate card charges — 23.2% above his published rate, on a public page.
+
+   What is here now is the price side of his rate card and nothing else:
+     M90/m² all-in, M80–150 with the terrain, TLB at M800/hour charged on,
+     M150 a trip.
+   The rate no longer moves with the paver mark-up. There is no cost input in
+   this file, so cost, profit and margin are not computable here and are not
+   claimed — they are null, and the three internal columns stay empty. The
+   owner's copy (mend-group-hq, clients/tm-stone/erp/ui/index.html) keeps the
+   indicative cost side; this copy must never see it.
+
+   Mirrored in erp/app/costing.js installationQuote() on the price side —
+   change both together. */
+const INSTALL_DEFAULTS = { rate:90, min:80, max:150, tlb:800, trip:150, confirmed:true };
+let install = store.get('tms_install', null) || {...INSTALL_DEFAULTS};
+/* Upgrade a save — or a restored backup — made before 14 Oct 2026. Those carry
+   {crew, rate:200, speed, bed, base, trans}: `rate` is present, so testing for a
+   missing `rate` is not enough. Any of the cost-side keys means the old model. */
+if (install.rate == null || install.min == null ||
+    install.crew != null || install.bed != null || install.base != null || install.trans != null) {
+  install = {...INSTALL_DEFAULTS};
+  store.set('tms_install', install);
+}
+
+/* What the customer pays. The only installation arithmetic in this copy. */
+function installPrice(area, rate, tlbHours, trips){
+  const laying = area * (rate || install.rate);
+  const tlb    = (tlbHours||0) * install.tlb;      // pass-through, at what he pays
+  const trans  = (trips||0) * install.trip;        // see the double-count note below
+  return { laying, tlb, trans, total: laying+tlb+trans,
+           bandLow: area*install.min, bandHigh: area*install.max };
+}
+
+/* Is the rate card in use still the one TM Stone gave on 14 Oct 2026?
+   This is what keeps the banner below honest: it goes quiet because the figures
+   are his, not because the page is hiding something. */
+function installIsRateCard(){
+  return ['rate','min','max','tlb','trip'].every(k => +install[k] === INSTALL_DEFAULTS[k]);
+}
+
+/* The terrain band, as rows. One row per rate he actually quotes between. */
+function installOptions(area, rate, tlbHours, trips){
+  const row = (key,label,r)=>{
+    const p = installPrice(area, r, tlbHours, trips);
+    return { mode:key, label, rate:r,
+             basis: M(r)+' /m² × '+area.toFixed(1)+' m²'+(p.tlb? ' + '+M(p.tlb)+' TLB':''),
+             charge: p.total,
+             /* PUBLIC BUILD: no cost input in this file, so these are unknown,
+                not zero. Printing 0 would read as "it costs him nothing". */
+             cost:null, profit:null, margin:null };
+  };
+  return { rows:[
+    row('easy',   'Easy terrain',    install.min),
+    row('normal', 'His normal rate', install.rate),
+    row('hard',   'Hard terrain',    install.max)
+  ]};
+}
+
+function renderInstall(){
+  const area = lines.reduce((s,l)=>s+l.area, 0);
+  const trips = +$('itrips').value || 0;
+  const tlbHours = +$('itlb').value || 0;
+  const mode = $('imode').value;
+
+  const _g = (typeof currentGround==='function') ? currentGround() : null;
+  const _c = (typeof currentCrew==='function') ? currentCrew() : null;
+  if ($('groundNote') && _g && _c){
+    const eff = (_c.speed||45)*(_g.speed||1);
+    $('groundNote').innerHTML = `<b>${_c.name}</b> (${_c.size} people) on <b>${_g.name.split(' — ')[0]}</b> ground lays about <b>${eff.toFixed(0)} m² a day</b> — ${_g.why}`;
+  }
+  /* The guard is KEPT and it still has a job. It no longer depends on
+     SHOW_INTERNAL_COSTS: every figure it prints is one TM Stone publishes, so
+     there is nothing here to hide from a customer. What it watches is whether
+     the rates in use are still his. Shipped, they are — the banner is quiet
+     because `confirmed` is true AND the five rates still match the card he
+     gave, not because the page is suppressing a warning. Edit a rate and it
+     speaks up, which is the only state in which an invented laying price can
+     now reach a customer from this page. */
+  const onCard = install.confirmed && installIsRateCard();
+  $('rateWarn').innerHTML = onCard ? '' :
+    `<div class="alert a-warn"><b>These are not TM Stone's rate card.</b><br>
+       The card he gave on 14 October 2026 is <b>M${INSTALL_DEFAULTS.rate}/m²</b> all-in for levelling,
+       bedding sand, paving and finishes, moving between <b>M${INSTALL_DEFAULTS.min}</b> and
+       <b>M${INSTALL_DEFAULTS.max}</b> with the terrain, with excavation charged separately at
+       <b>M${INSTALL_DEFAULTS.tlb}/hour</b> of TLB and <b>M${INSTALL_DEFAULTS.trip}</b> a trip.
+       This page is currently set to <b>${M(install.rate)}/m²</b> (${M(install.min)}–${M(install.max)}),
+       TLB <b>${M(install.tlb)}/hour</b>, trip <b>${M(install.trip)}</b>.<br>
+       <span class="mini">Press "Back to the rate card" on Prices &amp; Rates to restore his figures, or
+       leave these in if he has given you new ones. Do not send a laying price built on a rate he has
+       not given.</span></div>`;
+
+  if (!area || mode === 'none'){
+    $('iRows').innerHTML = '<tr><td colspan="6" class="mini" style="padding:16px 10px">'+
+      (area ? 'Supply only — no installation charged.' : 'Add an item above to compare installation options.')+'</td></tr>';
+    $('iNote').textContent = '';
+    return;
+  }
+
+  const rate = +$('irate').value || install.rate;
+  const { rows } = installOptions(area, rate, tlbHours, trips);
+  $('iRows').innerHTML = rows.map(r=>{
+    const on = Math.abs(r.rate - rate) < 0.001;
+    return `<tr style="${on?'background:#ffe9e2':''}">
+      <td><b>${r.label}</b>${on?' <span class="pill p-sent">chosen</span>':''}</td>
+      <td class="mini">${r.basis}</td>
+      <td class="num"><b>${M(r.charge)}</b></td>
+      <!-- PUBLIC BUILD: cost, profit and margin are emitted empty. There is no
+           cost input in this file to compute them from, and they were only ever
+           CSS-hidden before — the figures still reached the DOM. -->
+      <td class="num internal"></td>
+      <td class="num internal"></td>
+      <td class="num internal"></td></tr>`;
+  }).join('');
+
+  /* What this note used to do: compare per-m², per-day and fixed price and say who
+     absorbs two extra days. That comparison only existed because this file believed
+     it knew his crew day rate. It does not, and it must not. He sells one rate, so
+     the useful note is what the rate includes and what it excludes. */
+  const p = installPrice(area, rate, tlbHours, trips);
+  $('iNote').innerHTML =
+    `Includes <b>levelling, bedding sand, paving and finishes</b> at <b>${M(rate)}/m²</b> over
+     ${area.toFixed(1)} m². Excludes excavation — TLB at <b>${M(install.tlb)}/hour</b>, charged on the
+     side at what it costs.`+
+    (p.tlb ? ` ${(tlbHours).toFixed(1)} hour${tlbHours===1?'':'s'} of TLB adds <b>${M(p.tlb)}</b>.` : '')+
+    `<br><br>On terrain the same ${area.toFixed(1)} m² runs <b>${M(p.bandLow)}</b> (easy) to
+     <b>${M(p.bandHigh)}</b> (hard) — the rate moves with the ground, and with nothing else.`+
+    (p.trans ? `<br><br><span class="mini">Trips: site fuel is already inside the monthly transport
+     overhead carried by every paver. Charging ${trips} trip${trips===1?'':'s'} here as well counts it
+     twice — add them only for out-of-town sites.</span>` : '');
+}
+
+function currentInstall(){
+  const area = lines.reduce((s,l)=>s+l.area, 0);
+  const mode = $('imode').value;
+  if (!area || mode === 'none') return { mode:'none', charge:0, cost:0, days:0 };
+  const rate = +$('irate').value || install.rate;
+  const tlbHours = +$('itlb').value || 0;
+  const trips = +$('itrips').value || 0;
+  const p = installPrice(area, rate, tlbHours, trips);
+  const override = parseFloat($('ioverride').value);
+  const charge = isNaN(override) ? p.total : override;
+  /* install_mode stays 'per_m2' or 'per_job' so saved quotes and the Supabase
+     check constraint (migration 003) still accept them.
+     cost is 0 because this copy holds no cost input — it is not a claim that
+     laying is free, and no cost is printed anywhere from it. */
+  return { mode: isNaN(override) ? 'per_m2' : 'per_job',
+           charge, cost:0, days:0, rate, tlbHours, tlb:p.tlb,
+           basis: M(rate)+' /m² × '+area.toFixed(1)+' m²'+(p.tlb?' + '+M(p.tlb)+' TLB':'') };
+}
+
+function renderInstallSettings(){
+  // Crew size and laying speed live on the CREWS table (Prices & Rates), not here.
+  // The quote screen's rate box is filled from the saved card too: its HTML value is
+  // the shipped M90, so without this a saved or restored card of M120 would show on
+  // the rate-card screen while the quote screen went on charging M90.
+  if ($('irate')) $('irate').value = install.rate;
+  if (!$('s_rate')) return;
+  $('s_rate').value=install.rate; $('s_min').value=install.min; $('s_max').value=install.max;
+  $('s_tlb').value=install.tlb;   $('s_trip').value=install.trip;
+}
+function saveInstall(){
+  install = {
+    ...install,
+    rate:parseMoney($('s_rate').value)||0,
+    min:parseMoney($('s_min').value)||0,
+    max:parseMoney($('s_max').value)||0,
+    tlb:parseMoney($('s_tlb').value)||0,
+    trip:parseMoney($('s_trip').value)||0,
+    confirmed:true
+  };
+  store.set('tms_install', install);
+  if ($('irate')) $('irate').value = install.rate;
+  renderInstallSettings(); renderLines();
+  alert(installIsRateCard()
+    ? 'Rate card saved — unchanged from the card given 14 October.'
+    : 'Rate card saved. These are no longer the rates given on 14 October, so the installation screen now says so.');
+}
+function resetInstall(){
+  install = {...INSTALL_DEFAULTS};
+  store.set('tms_install', install);
+  if ($('irate')) $('irate').value = install.rate;
+  renderInstallSettings(); renderLines();
+  alert('Back to the rate card given 14 October: M90/m², M80–150 by terrain, TLB M800/hour, M150 a trip.');
+}
+/* Changing any installation control must re-run the whole quote, not just the
+   comparison table — the total includes installation. renderLines() calls
+   renderInstall() at the end, so this is one pass, not a loop. */
+['imode','irate','itlb','itrips','ioverride','icrew','iground'].forEach(id=>{
+  const el=$(id); if(el){ el.addEventListener('input',renderLines); el.addEventListener('change',renderLines); }
+});
+
+
+/* ============ CREWS · GROUND · TRADE ============ */
+/* PUBLIC BUILD — crew pay is GONE from this file as of 14 Oct 2026 (MEN-134 (c)).
+   It used to carry a day cost per crew (M255 and M400). The earlier public build
+   folded pay-per-person into that one composite figure and said honestly that it
+   had not made the number unknowable, because the installation charge was still
+   built from it and could be worked back out. That residual is now closed at the
+   source: installation is priced off TM Stone's own rate card, the crew day cost
+   is not in this file at all, and nothing here derives a cost from it.
+   Crew size and laying speed stay — both are told to the customer anyway, and
+   the laying-speed estimate is the only thing this copy still uses a crew for. */
+const CREW_DEFAULTS = [
+  {id:'c1', name:'Small crew (3)',   size:3, speed:50},
+  {id:'c2', name:'Full crew (4)',    size:4, speed:45},
+];
+const GROUND_DEFAULTS = [
+  {code:'EASY',   name:'Easy — flat, already compacted',     speed:1.30, prep:0.70, why:'Existing slab or well-compacted base.'},
+  {code:'NORMAL', name:'Normal — level ground, ordinary soil',speed:1.00, prep:1.00, why:'Standard driveway or yard. The baseline.'},
+  {code:'AWKWARD',name:'Awkward — slopes, curves, many cuts', speed:0.70, prep:1.20, why:'Sloping or curved. Slower, more cutting and waste.'},
+  {code:'HARD',   name:'Hard — rocky, wet or poor soil',      speed:0.50, prep:1.60, why:'Rock, clay or waterlogged. Heavy excavation.'},
+  {code:'TIGHT',  name:'Tight access — no vehicle access',    speed:0.60, prep:1.10, why:'Barrows only, everything carried in.'}
+];
+const TIER_DEFAULTS = [
+  {name:'Casual / small order', min:0,    markup:35, terms:'Cash on collection'},
+  {name:'Trade',                min:100,  markup:28, terms:'Cash on collection'},
+  {name:'Trade Plus',           min:500,  markup:22, terms:'50% deposit, balance on delivery'},
+  {name:'Contract',             min:1500, markup:18, terms:'30 days on approved account'}
+];
+let crews  = store.get('tms_crews',  null) || CREW_DEFAULTS.map(c=>({...c}));
+let ground = store.get('tms_ground', null) || GROUND_DEFAULTS.map(g=>({...g}));
+let tiers  = store.get('tms_tiers',  null) || TIER_DEFAULTS.map(t=>({...t}));
+
+/* A crew saved on his phone before this build carries a day cost (`dayCost`, or
+   `rate` per person before that). Drop it on load: nothing in this copy prices
+   from it any more, and leaving it would keep his labour cost in this device's
+   storage and in any backup file exported from this page. */
+crews.forEach(c => { delete c.dayCost; delete c.rate; });
+store.set('tms_crews', crews);
+
+function currentCrew(){ return crews.find(c=>c.id===$('icrew').value) || crews[0]; }
+function currentGround(){ return ground.find(g=>g.code===$('iground').value) || ground.find(g=>g.code==='NORMAL'); }
+
+function fillCrewGround(){
+  const cs=$('icrew'), gs=$('iground'); if(!cs||!gs) return;
+  const cv=cs.value, gv=gs.value;
+  cs.innerHTML = crews.map(c=>`<option value="${c.id}">${c.name} — ${c.size} people</option>`).join('');
+  gs.innerHTML = ground.map(g=>`<option value="${g.code}">${g.name}</option>`).join('');
+  if(cv) cs.value=cv; if(gv) gs.value=gv; else gs.value='NORMAL';
+}
+
+function renderCrews(){
+  const el=$('crewRows'); if(!el) return;
+  el.innerHTML = crews.map((c,i)=>`
+    <div class="mat">
+      <div><b>${c.name}</b><div class="mini">${c.size} people</div></div>
+      <div><label>People</label><input type="number" value="${c.size}" min="1" onchange="updCrew(${i},'size',this.value)"></div>
+      <div><label>m² per day (normal ground)</label><input type="number" value="${c.speed}" onchange="updCrew(${i},'speed',this.value)"></div>
+      <div class="actions">${crews.length>1?`<button class="btn dgr sm" onclick="delCrew(${i})">Remove</button>`:''}</div>
+    </div>`).join('');
+}
+function updCrew(i,k,v){ crews[i][k]=parseFloat(v)||0; store.set('tms_crews',crews); renderCrews(); fillCrewGround(); renderLines(); }
+function addCrew(){
+  const n=$('nc_name').value.trim(); if(!n){ alert('Give the crew a name.'); return; }
+  crews.push({id:'c'+Date.now(), name:n, size:+$('nc_size').value||1, speed:+$('nc_speed').value||45});
+  store.set('tms_crews',crews); $('nc_name').value='';
+  renderCrews(); fillCrewGround(); renderLines();
+}
+function delCrew(i){ crews.splice(i,1); store.set('tms_crews',crews); renderCrews(); fillCrewGround(); renderLines(); }
+
+function renderGround(){
+  const el=$('groundRows'); if(!el) return;
+  el.innerHTML = ground.map((g,i)=>`
+    <div class="mat">
+      <div><b>${g.name}</b><div class="mini">${g.why}</div></div>
+      <div><label>Speed factor</label><input type="number" step="0.05" value="${g.speed}" onchange="ground[${i}].speed=parseFloat(this.value)||1"></div>
+      <div><label>Base-prep factor</label><input type="number" step="0.05" value="${g.prep}" onchange="ground[${i}].prep=parseFloat(this.value)||1"></div>
+      <div class="mini">${g.speed>1?'faster':g.speed<1?'slower':'baseline'}</div>
+    </div>`).join('');
+}
+function saveGround(){ store.set('tms_ground',ground); renderGround(); fillCrewGround(); renderLines(); alert('Ground factors saved.'); }
+
+/* ---- trade ---- */
+function renderTrade(){
+  const ps=$('tProd'); if(!ps) return;
+  if(!ps.options.length) ps.innerHTML = PRODUCTS.map(p=>`<option value="${p.code}">${p.name}</option>`).join('');
+  const area=+$('tArea').value||0;
+  const prod=PRODUCTS.find(p=>p.code===ps.value)||PRODUCTS[0];
+  const sorted=[...tiers].sort((a,b)=>a.min-b.min);
+  const tier=[...sorted].reverse().find(t=>area>=t.min)||sorted[0];
+  const c=unitCosting(prod, materials, tier.markup);
+  const units=Math.ceil(area/prod.face);
+  const revenue=units*c.price, cost=units*c.cost;
+
+  /* What the same area would earn installed. REBUILT 14 Oct 2026 (MEN-134 (c)):
+     the laying side is his own rate card, not MEND's invented cost marked up.
+     This copy holds no cost, so the comparison is revenue, not profit — and it
+     says so rather than quietly presenting revenue as if it were profit. */
+  const instMk=+$('tCompare').value||40;
+  const ci=unitCosting(prod, materials, instMk);
+  const supply=Math.ceil(area/prod.face)*ci.price;
+  const crew=crews[0], g=ground.find(x=>x.code==='NORMAL');
+  const days=Math.ceil(area/((crew.speed||45)*(g?g.speed:1)));
+  const lay=installPrice(area, install.rate, 0, 0);
+  const instRevenue=supply + lay.total;
+
+  $('tierBox').innerHTML=`
+    <div class="tot" style="margin-bottom:14px">
+      <div><div class="lbl">Trade order — ${tier.name}</div>
+        <div class="big">${M(revenue)}</div>
+        <div class="brk">${area} m² · ${units.toLocaleString('en-US')} pavers · ${M(c.price)} each · ${M(c.perM2)}/m²<br>
+        ${ic(`Cost to make <b>${M(cost)}</b> · Profit <b>${M(revenue-cost)}</b> at ${tier.markup}% mark-up<br>`)}
+        Terms: ${tier.terms}</div></div>
+    </div>
+    ${ic(`<div class="alert a-ok">
+      <b>Same ${area} m², two ways — revenue, not profit.</b><br>
+      · <b>Trade supply:</b> ${M(revenue)} at ${tier.markup}% off the list. No crew, no site, no weather.<br>
+      · <b>Supply and lay:</b> ${M(instRevenue)} — ${M(supply)} of pavers plus ${M(lay.total)} of laying at
+        ${M(install.rate)}/m², and it ties up a crew for about ${days} day${days>1?'s':''} with the site risk on you.<br>
+      <span class="mini">Which one earns more depends on what laying costs you, and that figure is
+      deliberately not in this copy. Your own copy has it.</span>
+    </div>`)}`;
+
+  $('tListRows').innerHTML = PRODUCTS.flatMap(pr =>
+    sorted.map(t=>{
+      const cc=unitCosting(pr, materials, t.markup);
+      return `<tr><td>${pr.name}</td><td><b>${t.name}</b></td><td class="num">${t.min}</td>
+        <td class="num">${M(cc.price)}</td><td class="num"><b>${M(cc.perM2)}</b></td><td class="mini">${t.terms}</td></tr>`;
+    })).join('');
+
+  $('tierEdit').innerHTML = sorted.map((t,i)=>`
+    <div class="mat">
+      <div><b>${t.name}</b><div class="mini">${t.terms}</div></div>
+      <div><label>From (m²)</label><input type="number" value="${t.min}" onchange="tiers[${i}].min=+this.value||0"></div>
+      <div><label>Mark-up %</label><input type="number" value="${t.markup}" onchange="tiers[${i}].markup=+this.value||0"></div>
+      <div class="mini">${M(unitCosting(PRODUCTS[0],materials,t.markup).perM2)}/m² on SQ200</div>
+    </div>`).join('');
+}
+function saveTiers(){ store.set('tms_tiers',tiers); renderTrade(); alert('Trade tiers saved.'); }
+['tArea','tProd','tCompare'].forEach(id=>{ const e=$(id); if(e){ e.addEventListener('input',renderTrade); e.addEventListener('change',renderTrade);} });
+
+
+/* ============ SETUP: capture the primitives ============
+   PUBLIC BUILD. In the owner's copy this screen replaces frozen overhead and
+   mould constants with numbers he enters, and derives every price from them.
+   Here it captures only: the constants are not shipped, nothing it captures
+   leaves the device, and selling prices come from PRICE_LIST either way. */
+const SETUP_DEFAULTS = {
+  /* Names only, amounts 0. We do NOT invent his costs — these are prompts to fill in.
+     Until they are filled, the system keeps using the figure off his own cost sheet. */
+  /* PUBLISHED COPY — amounts deliberately blank.
+     TM Stone's real overheads are commercially confidential and this page is served
+     from a public repository, so they are not shipped here. They are prompts to fill
+     in; anything entered is stored in the owner's own browser and never published.
+     Until they are filled the system uses the single aggregate figure off his own
+     cost sheet (see `sheet` below), which is what the fallback at derivedOverhead()
+     is for. */
+  overheads: [
+    {name:'Yard rent',                cat:'fixed',     amt:0},
+    {name:'Electricity',              cat:'utilities', amt:0},
+    {name:'Water',                    cat:'utilities', amt:0},
+    {name:'Salaries',                 cat:'labour',    amt:0},
+    {name:'Transport / petrol',       cat:'other',     amt:0},
+  ],
+  /* PUBLIC BUILD — output blank too. How many pavers he makes in a month is
+     production data a competitor would pay for. Blank here; whatever he enters
+     is saved on his own device. */
+  cap:    { days:0, batches:0, yield:0 },
+  /* PUBLIC BUILD — the MIX DESIGN IS REMOVED. Bags of cement, litres of sand
+     and stone and kilos of oxide per batch are TM Stone's core know-how and the
+     one thing a competitor could copy outright. Blank prompts only. The Setup
+     screen still accepts them and they stay in his browser. */
+  recipe: { cement:0, sand:0, stone:0, pigment:0 },
+  /* PUBLIC BUILD — mould prices and wear life are supplier terms, also not shipped. */
+  moulds: [],
+  /* Pack sizes only, and deliberately so: a 50 kg cement bag, a 25 kg oxide bag
+     and a 12 m³ sand load are how the whole trade buys, not anything of his.
+     stoneT is left at 1.6 exactly as it was — the density correction belongs to
+     the owner's engine, and this patch changes security, not arithmetic. */
+  consts: { sandLoad:12, stoneT:1.6, pigBag:25, cemBag:50 },
+  /* PUBLIC BUILD — overhead and mould depreciation per paver are removed.
+     Selling prices come from PRICE_LIST, so nothing needs them to quote. */
+  sheet:  { overhead:0, mould:0 }
+};
+const ohTotal   = () => setup.overheads.filter(o=>o.amt>0).reduce((s,o)=>s+ +o.amt,0);
+const batchesPM = () => setup.cap.days * setup.cap.batches;
+const unitsPM   = prod => batchesPM() * (setup.cap.yield / prod.litres);
+let setup = store.get('tms_setup', null) || JSON.parse(JSON.stringify(SETUP_DEFAULTS));
+if (!setup.sheet) setup.sheet = { overhead:0, mould:0 };   // upgrade older saves
+
+const capturedOverhead = prod => { const u=unitsPM(prod); return u ? ohTotal()/u : 0; };
+const capturedMould = prod => {
+  const ms = setup.moulds.filter(m=>m.product===prod.code);
+  const cost = ms.reduce((s,m)=>s+ +m.cost,0), pours = ms.reduce((s,m)=>s+ +m.pours,0);
+  return pours ? cost/pours : 0;
+};
+/* Captured data wins ONLY once it exists. No capture = his own cost sheet, unchanged,
+   so nothing he already quoted moves until he decides it should. */
+const usingCapturedOh    = () => ohTotal() > 0;
+const usingCapturedMould = prod => setup.moulds.some(m=>m.product===prod.code && m.pours>0);
+const derivedOverhead = prod => usingCapturedOh() ? capturedOverhead(prod) : setup.sheet.overhead;
+const derivedMould    = prod => usingCapturedMould(prod) ? capturedMould(prod) : setup.sheet.mould;
+
+/* PUBLIC BUILD: both of these used to build a price up from the mix design and
+   the supplier prices. Neither is in this file now, so unitCostingD is simply
+   unitCosting — the published list — and batchCostD has nothing to add up.
+   Kept under their old names because several screens call them directly. */
+function batchCostD(){ return null; }
+function unitCostingD(prod, prices, markup){ return unitCosting(prod, prices, markup); }
+
+function renderSetup(){
+  if(!$('ohRows')) return;
+  $('ohRows').innerHTML = setup.overheads.map((o,i)=>`
+    <div class="mat">
+      <div><b>${o.name}</b><div class="mini">${o.cat}</div></div>
+      <div><label>Per month (M)</label><input type="number" value="${o.amt}" onchange="setup.overheads[${i}].amt=+this.value||0;saveSetup(true)"></div>
+      <div class="mini">${(ohTotal()? (o.amt/ohTotal()*100):0).toFixed(0)}% of overhead</div>
+      <div class="actions"><button class="btn dgr sm" onclick="delOverhead(${i})">Remove</button></div>
+    </div>`).join('');
+  $('ohTotal').textContent = M(ohTotal());
+  const p0 = PRODUCTS[0];
+  /* PUBLIC BUILD: there is no cost-sheet figure in this copy to fall back to or
+     to compare against, so neither line claims one. What he enters here is his
+     own, stays on this device, and does not move a selling price. */
+  $('ohNote').innerHTML = usingCapturedOh()
+    ? `Spread over about <b>${Math.round(unitsPM(p0)).toLocaleString('en-US')}</b> ${p0.code} pavers a month = <b>${M(capturedOverhead(p0))}</b> of overhead in every paver.`
+    : `Nothing entered yet. Fill these in — they stay on this phone, and they tell you what each paver really costs you.`;
+  const cmp = $('ohCompare');
+  if (cmp) cmp.innerHTML = '';
+
+  $('cap_days').value=setup.cap.days; $('cap_batches').value=setup.cap.batches; $('cap_yield').value=setup.cap.yield;
+  $('capNote').innerHTML = `${setup.cap.days} days × ${setup.cap.batches} batches = <b>${batchesPM()}</b> batches a month → about <b>${Math.round(unitsPM(p0)).toLocaleString('en-US')}</b> ${p0.code} pavers.`;
+  $('br_cem').value=setup.recipe.cement; $('br_sand').value=setup.recipe.sand;
+  $('br_stone').value=setup.recipe.stone; $('br_pig').value=setup.recipe.pigment;
+  $('k_sand').value=setup.consts.sandLoad; $('k_stone').value=setup.consts.stoneT;
+  $('k_pig').value=setup.consts.pigBag;   $('k_cem').value=setup.consts.cemBag;
+
+  if(!$('md_prod').options.length){
+    $('md_prod').innerHTML = PRODUCTS.map(p=>`<option value="${p.code}">${p.name}</option>`).join('');
+    $('wk_prod').innerHTML = PRODUCTS.map(p=>`<option value="${p.code}">${p.name}</option>`).join('');
+  }
+  $('mouldRows').innerHTML = setup.moulds.length ? setup.moulds.map((m,i)=>{
+    const pr=PRODUCTS.find(p=>p.code===m.product);
+    return `<div class="mat">
+      <div><b>${pr?pr.name:m.product}</b><div class="mini">${(+m.pours).toLocaleString('en-US')} pours expected</div></div>
+      <div><label>Cost (M)</label><input type="number" value="${m.cost}" onchange="setup.moulds[${i}].cost=+this.value||0;saveSetup(true)"></div>
+      <div><label>Expected pours</label><input type="number" value="${m.pours}" onchange="setup.moulds[${i}].pours=+this.value||1;saveSetup(true)"></div>
+      <div class="mini">${M(m.cost/(m.pours||1))} per paver</div>
+    </div>`;
+  }).join('') : `<p class="mini">No moulds entered yet. Add one and the system works out the wear in every paver. Kept on this phone.</p>`;
+  renderWorking(); renderShare();
+}
+
+/* PUBLIC BUILD — THE BIGGEST SINGLE LEAK ON THIS PAGE, NOW CLOSED.
+   This table, "Where every price comes from", wrote the entire cost model into
+   the DOM on every load: cement per bag, the sand load price, stone per tonne,
+   oxide per bag, the mix in bags and litres, overhead and mould per paver, the
+   cost per paver and the mark-up on top. It was never behind
+   SHOW_INTERNAL_COSTS at all — only behind an inactive tab — so it survived
+   "save page as", a reader view and any scrape, not just view-source.
+   It is not rendered here. It stays in the owner's copy, where it belongs. */
+function renderWorking(){
+  const el=$('wkRows'); if(!el) return;
+  el.innerHTML = `<tr><td colspan="3" class="mini" style="padding:16px 10px">
+    The cost build-up is not part of this copy. This page is on a public address,
+    so it carries selling prices only. The full working — materials, overhead,
+    mould wear and cost per paver — is in the owner's copy.</td></tr>`;
+}
+
+
+/* ============ closing the loop ============
+   The app runs in LOCAL mode until a Supabase project exists, which means what he
+   captures lives in localStorage on HIS phone: Jakote cannot see it, and it dies if
+   he clears his browser. Until the cloud is wired, he sends it himself and can keep
+   a file copy. No accounts, no backend, no cost. */
+const JAKOTE_WA = '27832092120';
+
+function setupIsEmpty(){ return ohTotal() <= 0 && !setup.moulds.length; }
+
+function numbersSummary(){
+  const p = PRODUCTS.find(x=>x.code==='SQ200') || PRODUCTS[0];
+  const d = new Date();
+  const when = d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getFullYear();
+  const L = [];
+  L.push('TM STONE — my numbers ('+when+')','');
+  L.push('MONTHLY RUNNING COSTS');
+  const items = setup.overheads.filter(o=>+o.amt>0);
+  if (items.length){ items.forEach(o=>L.push('• '+o.name+': '+M(o.amt)));
+                     L.push('Total: '+M(ohTotal())); }
+  else L.push('• (not captured yet)');
+  L.push('','PRODUCTION');
+  L.push('• Working days a month: '+setup.cap.days);
+  L.push('• Batches a day: '+setup.cap.batches);
+  L.push('• Batch yield: '+setup.cap.yield+' L');
+  L.push('= about '+Math.round(unitsPM(p)).toLocaleString('en-US')+' '+p.code+' pavers a month');
+  L.push('','BATCH RECIPE');
+  L.push('• '+setup.recipe.cement+' bags cement, '+setup.recipe.sand+' L sand, '
+         +setup.recipe.stone+' L stone, '+setup.recipe.pigment+' kg pigment');
+  L.push('','MOULDS');
+  if (setup.moulds.length) setup.moulds.forEach(m=>{
+    const pr = PRODUCTS.find(x=>x.code===m.product);
+    L.push('• '+(pr?pr.name:m.product)+': '+M(m.cost)+' over '+(+m.pours).toLocaleString('en-US')
+           +' pours = '+M(m.cost/(m.pours||1))+' a paver');
+  }); else L.push('• (not captured yet)');
+  const mat = MATERIAL_CODES.filter(k=>materials[k]!=null);
+  if (mat.length){
+    L.push('','MATERIAL PRICES I AM PAYING');
+    L.push(mat.map(k=>MATNAMES[k][0]+' '+M(materials[k])+'/'+MATNAMES[k][1]).join(' · '));
+  }
+  if (typeof crews !== 'undefined' && crews && crews.length){
+    L.push('','LAYING CREWS');
+    crews.forEach(c=>L.push('• '+c.name+': '+c.size+' men, '+c.speed+' m² a day on normal ground'));
+  }
+  L.push('','LAYING RATE CARD');
+  L.push('• '+M(install.rate)+'/m² all-in ('+M(install.min)+'–'+M(install.max)+' with the terrain)'
+         +', TLB '+M(install.tlb)+'/hour and '+M(install.trip)+' a trip charged on'
+         +(installIsRateCard()?'':'  ⚠️ CHANGED from the card given 14 October'));
+  // PUBLIC BUILD: cost per paver is not in this copy, so the summary states the
+  // published selling price instead of a cost it would have to invent.
+  const c = unitCosting(p, materials, 40);
+  L.push('','WHAT I SELL IT AT ('+p.code+' at 40% mark-up)');
+  L.push('• Sell '+M(c.price)+' a paver · '+M(c.perM2)+' per m²');
+  L.push('','Sent from the TM Stone quote builder.');
+  return L.join('\n');
+}
+
+function renderShare(){
+  const where = $('shareWhere'); if (!where) return;
+  const cloud = (window.TMS && TMS.mode === 'cloud');
+  where.innerHTML = cloud
+    ? 'Your numbers are saved to your TM Stone account — Jakote can see them and does not need this.'
+    : '<b>Right now these numbers are saved on this phone only.</b> Nobody else can see them, and '
+      + 'they are lost if you clear your browser or change phone. Send them across so they are '
+      + 'safe and so the system can be set up properly for your yard.';
+  const pv = $('sharePreview');
+  pv.innerHTML = setupIsEmpty()
+    ? '<div class="alert a-warn" style="margin-top:12px">Nothing captured yet — fill in your monthly '
+      + 'running costs and at least one mould above, then send.</div>'
+    : '<pre style="margin-top:12px;background:var(--card2);border:1px solid var(--line2);border-radius:0;'
+      + 'padding:12px;font-size:12.5px;white-space:pre-wrap;overflow-x:auto">'
+      + numbersSummary().replace(/[<>&]/g, ch=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[ch])) + '</pre>';
+}
+
+function shareNumbers(){
+  if (!SHOW_INTERNAL_COSTS){ alert('Not available on a shared copy of this page.'); return; }
+  if (setupIsEmpty()){ alert('Fill in your monthly running costs first — there is nothing to send yet.'); return; }
+  window.open('https://wa.me/'+JAKOTE_WA+'?text='+encodeURIComponent(numbersSummary()), '_blank');
+}
+
+function backupSetup(){
+  if (!SHOW_INTERNAL_COSTS){ alert('Not available on a shared copy of this page.'); return; }
+  const blob = new Blob([JSON.stringify({saved:new Date().toISOString(), setup, materials}, null, 2)],
+                        {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'tm-stone-numbers-' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+}
+
+function restoreSetup(evt){
+  const f = evt.target.files && evt.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const d = JSON.parse(r.result);
+      if (!d.setup || !d.setup.cap) throw new Error('not a TM Stone backup');
+      setup = d.setup;
+      if (!setup.sheet) setup.sheet = { overhead:0, mould:0 };
+      if (d.materials) { Object.assign(materials, d.materials); store.set(LS_MAT, materials); }
+      store.set('tms_setup', setup);
+      renderSetup(); renderLines(); renderPriceList();
+      alert('Loaded. Every price now uses the numbers from that file.');
+    } catch (e) { alert('That file could not be read as a TM Stone backup.'); }
+    evt.target.value = '';
+  };
+  r.readAsText(f);
+}
+
+
+/* ============ portability ============
+   localStorage belongs to one origin. The day this site moves to its own address
+   the store starts empty, and GitHub stops serving the old address at all, so
+   nothing can be read back from it. These two buttons are the only way the data
+   crosses, which is why they are NOT behind SHOW_INTERNAL_COSTS — the published
+   copy is the one that needs them. They move every tms_ key, not just setup. */
+function backupAll(){
+  const keys = {};
+  for (let i = 0; i < localStorage.length; i++){
+    const k = localStorage.key(i);
+    if (k && k.indexOf('tms_') === 0) keys[k] = localStorage.getItem(k);
+  }
+  if (!Object.keys(keys).length){ alert('Nothing saved on this phone yet, so there is nothing to back up.'); return; }
+  const blob = new Blob([JSON.stringify({ tms_backup:1, saved:new Date().toISOString(),
+                                          from:location.origin, keys }, null, 2)],
+                        {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'tm-stone-everything-' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+}
+
+function restoreAll(evt){
+  const f = evt.target.files && evt.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const d = JSON.parse(r.result);
+      if (!d || d.tms_backup !== 1 || !d.keys) throw new Error('not a TM Stone backup');
+      Object.keys(d.keys).forEach(k => { if (k.indexOf('tms_') === 0) localStorage.setItem(k, d.keys[k]); });
+      alert('Restored ' + Object.keys(d.keys).length + ' saved items. The page will reload.');
+      location.reload();
+    } catch (e) { alert('That file could not be read as a TM Stone backup.'); }
+    evt.target.value = '';
+  };
+  r.readAsText(f);
+}
+
+/* ============ MODULE 2 — jobs and production ============
+   Module 1 answers "what should I charge?". This answers the two questions that
+   lose money after the quote is accepted: can we deliver when we promised, and
+   what did the rejects really cost us.
+   Mirrors erp/db/006_jobs_production.sql — change both together. */
+let jobs = store.get('tms_jobs', []);
+let runs = store.get('tms_runs', []);
+
+const today0     = () => new Date().toISOString().slice(0,10);
+const daysBetween= (a,b) => Math.round((new Date(b) - new Date(a)) / 86400000);
+const prodOf     = code => PRODUCTS.find(p=>p.code===code) || PRODUCTS[0];
+const unitsPerBatch = code => setup.cap.yield / prodOf(code).litres;
+
+const runsFor       = code => runs.filter(r=>r.code===code);
+const unitsProduced = code => runsFor(code).reduce((s,r)=>s + (+r.good||0), 0);
+const unitsCommitted= code => jobs.filter(j=>j.code===code && ['accepted','scheduled','laying'].includes(j.status))
+                                  .reduce((s,j)=>s + (+j.units||0), 0);
+const unitsAvailable= code => unitsProduced(code) - unitsCommitted(code);
+
+/* Real yield: the share of poured pavers that survive. 1.0 until anything is logged,
+   so an empty system never invents a reject rate. */
+function actualYield(code){
+  const g = runsFor(code).reduce((s,r)=>s + (+r.good||0), 0);
+  const b = runsFor(code).reduce((s,r)=>s + (+r.reject||0), 0);
+  return (g + b) === 0 ? 1 : g / (g + b);
+}
+function daysToProduce(code, units){
+  const perDay = setup.cap.batches * unitsPerBatch(code) * actualYield(code);
+  return perDay > 0 ? Math.ceil(units / perDay) : null;
+}
+/* A rejected paver consumed the same cement as a good one, so the pavers that
+   survive have to carry its cost. This is the cost per SOLD paver. */
+function trueCost(code, markup){
+  const th = unitCostingD(prodOf(code), materials, markup||40).cost;
+  const y  = actualYield(code);
+  return { theoretical: th, yield: y, real: y ? th / y : th, extra: (y ? th/y : th) - th };
+}
+
+function feasibility(j){
+  const out = [];
+  const free = unitsAvailable(j.code) + (+j.units||0);   // exclude this job's own claim
+  const short = (+j.units||0) - free;
+  out.push({ name:'Time to make them', ok: true,
+    detail: short <= 0
+      ? 'Already poured — '+Math.round(free).toLocaleString('en-US')+' made against this order'
+      : Math.round(short).toLocaleString('en-US')+' pavers to pour, about '
+        + (daysToProduce(j.code, short) ?? '?') + ' working days at '
+        + setup.cap.batches + ' batches a day' });
+
+  const crew = crews.find(c=>c.id===j.crew_id);
+  const gr   = ground.find(g=>g.code===j.ground) || ground.find(g=>g.code==='NORMAL');
+  let layDays = null;
+  if (!crew) out.push({ name:'Laying time', ok:false, detail:'No crew assigned yet.' });
+  else {
+    const speed = crew.speed * (gr ? gr.speed : 1);
+    layDays = Math.ceil((+j.area) / (speed || 1));
+    out.push({ name:'Laying time', ok:true,
+      detail: crew.name+' lays about '+speed.toFixed(1)+' m² a day on '
+              + (gr ? gr.name.split('—')[0].trim().toLowerCase() : 'normal') + ' ground → '
+              + layDays + ' days for ' + j.area + ' m²' });
+  }
+
+  if (!j.promised_end) out.push({ name:'Promised date', ok:true, detail:'No date promised yet.' });
+  else {
+    const until = daysBetween(today0(), j.promised_end);
+    const make  = short > 0 ? (daysToProduce(j.code, short) || 0) : 0;
+    const need  = make + (layDays || 0);
+    out.push({ name:'Promised date', ok: until >= need,
+      detail: (until < 0 ? Math.abs(until) + ' days PAST the promised date'
+                          : until + ' days until the promised date')
+              + '; this needs about ' + need + ' working days'
+              + (until >= need ? '' : ' — THIS PROMISE CANNOT BE KEPT') });
+  }
+  return out;
+}
+
+/* ---------- rendering ---------- */
+function renderJobsPage(){
+  if(!$('todayBoard')) return;
+  fillJobPickers();
+  renderToday(); renderStock(); renderRuns(); renderJobList();
+}
+
+function fillJobPickers(){
+  if(!$('r_prod').options.length){
+    $('r_prod').innerHTML = PRODUCTS.map(p=>`<option value="${p.code}">${p.name}</option>`).join('');
+    $('r_date').value = today0();
+  }
+  $('j_crew').innerHTML   = crews.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  const gsel = $('j_ground').value;
+  $('j_ground').innerHTML = ground.map(g=>`<option value="${g.code}">${g.name}</option>`).join('');
+  $('j_ground').value = gsel || 'NORMAL';   // normal ground is the honest default, not the fastest
+  const used = new Set(jobs.map(j=>j.quote_no));
+  const open = quotes.filter(q=>!used.has(q.quote_no));
+  $('j_quote').innerHTML = open.length
+    ? open.map(q=>`<option value="${q.quote_no}">${q.quote_no} — ${q.customer} (${M(q.total)})</option>`).join('')
+    : '<option value="">— no unconverted quotes —</option>';
+  const hint = $('runHint');
+  const code = $('r_prod').value, exp = Math.round(unitsPerBatch(code) * (+$('r_batches').value||0));
+  hint.innerHTML = exp ? `At ${setup.cap.yield} L a batch that should give about <b>${exp.toLocaleString('en-US')}</b> ${code} pavers.` : '';
+}
+
+function renderToday(){
+  const t = today0();
+  const live = jobs.filter(j=>!['complete','invoiced','paid','lost'].includes(j.status));
+  const late = live.filter(j=>j.promised_end && j.promised_end < t);
+  const now  = live.filter(j=>!late.includes(j) && j.promised_start && j.promised_start <= t);
+  const soon = live.filter(j=>!late.includes(j) && !now.includes(j));
+  const short = PRODUCTS.map(p=>({p, gap: unitsAvailable(p.code)})).filter(x=>x.gap < 0);
+
+  let h = '';
+  if (late.length) h += `<div class="alert a-warn"><b>${late.length} job${late.length>1?'s':''} past the promised date</b><br>`
+    + late.map(j=>`${j.job_no} — ${j.customer}, promised ${j.promised_end} (${-daysBetween(today0(),j.promised_end)} days ago)`).join('<br>') + '</div>';
+  if (short.length) h += `<div class="alert a-warn" style="margin-top:10px"><b>Still to pour</b><br>`
+    + short.map(x=>`${x.p.name}: ${Math.abs(Math.round(x.gap)).toLocaleString('en-US')} pavers promised and not yet made — about ${daysToProduce(x.p.code, Math.abs(x.gap)) ?? '?'} days of pouring`).join('<br>') + '</div>';
+  h += `<div class="tot" style="margin-top:${h?'12px':'0'}">
+      <div><div class="lbl">On site now</div><div class="big">${now.length}</div>
+        <div class="brk">${now.map(j=>j.job_no+' · '+j.customer).join('<br>') || 'nothing on site'}</div></div>
+      <div><div class="lbl">Coming up</div><div class="big">${soon.length}</div>
+        <div class="brk">${soon.slice(0,3).map(j=>j.job_no+' · '+(j.promised_start||'unscheduled')).join('<br>') || 'nothing scheduled'}</div></div>
+    </div>`;
+  if (!jobs.length) h = '<p class="mini">No jobs yet. Save a quote, then create a job from it below.</p>';
+  $('todayBoard').innerHTML = h;
+}
+
+function renderStock(){
+  $('stockRows').innerHTML = PRODUCTS.map(p=>{
+    const made = unitsProduced(p.code), prom = unitsCommitted(p.code), free = made - prom;
+    const y = actualYield(p.code), logged = runsFor(p.code).length;
+    return `<tr><td>${p.name}</td>
+      <td class="num">${made.toLocaleString('en-US')}</td>
+      <td class="num">${prom.toLocaleString('en-US')}</td>
+      <td class="num" style="color:${free<0?'#b3261e':'inherit'};font-weight:${free<0?'700':'400'}">${
+        free < 0 ? Math.abs(free).toLocaleString('en-US')
+                 : (prom ? '— all poured' : '—')}</td>
+      <td class="num">${logged ? (y*100).toFixed(1)+'%' : '<span class="mini">no pours logged</span>'}</td></tr>`;
+  }).join('');
+
+  const withRuns = PRODUCTS.filter(p=>runsFor(p.code).some(r=>+r.reject>0));
+  $('rejectCost').innerHTML = (SHOW_INTERNAL_COSTS && withRuns.length) ? withRuns.map(p=>{
+    const t = trueCost(p.code, 40);
+    return `<div class="alert a-warn" style="margin-top:14px">
+      <b>${p.name}: breakages are costing you ${M(t.extra)} on every paver you sell.</b><br>
+      Costing says ${M(t.theoretical)} a paver, but only ${(t.yield*100).toFixed(1)}% survive the mould,
+      so the ones you sell really cost ${M(t.real)}. On a 3,000-paver job that is ${M(t.extra*3000)}
+      coming out of your profit that no quote has ever shown you.</div>`;
+  }).join('') : '';
+}
+
+function logRun(){
+  const good = +$('r_good').value;
+  if (!(good >= 0) || $('r_good').value === '') { alert('Enter how many good pavers came out.'); return; }
+  runs.unshift({ date:$('r_date').value || today0(), code:$('r_prod').value,
+                 batches:+$('r_batches').value||0, good, reject:+$('r_reject').value||0,
+                 by:$('r_by').value.trim() });
+  store.set('tms_runs', runs);
+  $('r_good').value=''; $('r_reject').value='0';
+  renderJobsPage();
+}
+function delRun(i){ runs.splice(i,1); store.set('tms_runs', runs); renderJobsPage(); }
+
+function renderRuns(){
+  if (!runs.length){ $('runRows').innerHTML = '<p class="mini">Nothing logged yet.</p>'; return; }
+  const rows = runs.slice(0,12).map((r,i)=>{
+    const tot = (+r.good) + (+r.reject);
+    const y = tot ? (r.good/tot*100).toFixed(0) : '—';
+    return `<tr><td>${r.date}</td><td>${r.code}</td><td class="num">${r.batches}</td>
+      <td class="num">${(+r.good).toLocaleString('en-US')}</td>
+      <td class="num" style="color:${+r.reject>0?'#b3261e':'inherit'}">${r.reject}</td>
+      <td class="num">${y}%</td><td class="mini">${r.by||''}</td>
+      <td><button class="btn dgr sm" onclick="delRun(${i})">×</button></td></tr>`;
+  }).join('');
+  $('runRows').innerHTML = `<table><thead><tr><th>Date</th><th>Product</th><th class="num">Batches</th>
+    <th class="num">Good</th><th class="num">Broken</th><th class="num">Yield</th><th>By</th><th></th></tr></thead>
+    <tbody>${rows}</tbody></table>`
+    + (runs.length>12 ? `<p class="mini" style="margin-top:8px">Showing the last 12 of ${runs.length}.</p>` : '');
+}
+
+function addJob(){
+  const qno = $('j_quote').value;
+  if (!qno){ alert('Save a quote first — a job is created from an accepted quote.'); return; }
+  const q = quotes.find(x=>x.quote_no===qno);
+  const line = q.lines[0];
+  jobs.unshift({
+    job_no: 'JOB-' + String(seqNext('job', jobs, 'job_no')).padStart(3,'0'),
+    quote_no: q.quote_no, customer: q.customer, site: q.site || '',
+    code: line.code, area: q.lines.reduce((s,l)=>s + (+l.area||0), 0),
+    units: q.lines.reduce((s,l)=>s + (+l.units||0), 0),
+    crew_id: $('j_crew').value, ground: $('j_ground').value,
+    promised_start: null, promised_end: $('j_end').value || null,
+    status: 'accepted', created: new Date().toISOString()
+  });
+  store.set('tms_jobs', jobs);
+  renderJobsPage();
+}
+function setJobStatus(i, st){
+  jobs[i].status = st;
+  if (st === 'laying' && !jobs[i].promised_start) jobs[i].promised_start = today0();
+  store.set('tms_jobs', jobs); renderJobsPage();
+}
+function delJob(i){ if(confirm('Delete this job?')){ jobs.splice(i,1); store.set('tms_jobs', jobs); renderJobsPage(); } }
+
+const JOB_STATES = ['accepted','scheduled','laying','complete','invoiced','paid','lost'];
+function renderJobList(){
+  if (!jobs.length){ $('jobRows').innerHTML = '<p class="mini">No jobs yet.</p>'; return; }
+  $('jobRows').innerHTML = jobs.map((j,i)=>{
+    const f = feasibility(j);
+    const bad = f.filter(x=>!x.ok);
+    const crew = crews.find(c=>c.id===j.crew_id);
+    return `<div class="mat" style="grid-template-columns:1fr;gap:8px">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:baseline">
+        <div><b>${j.job_no} — ${j.customer}</b>
+          <div class="mini">${j.site || 'site not set'} · ${j.area} m² · ${(+j.units).toLocaleString('en-US')} pavers
+            · ${crew ? crew.name : 'no crew'} · from ${j.quote_no}</div></div>
+        <div class="rowctl">
+          <select onchange="setJobStatus(${i}, this.value)">
+            ${JOB_STATES.map(st=>`<option ${st===j.status?'selected':''}>${st}</option>`).join('')}
+          </select>
+          <button class="btn dgr sm" onclick="delJob(${i})">×</button></div>
+      </div>
+      ${priceLine(i, j)}
+      <div class="alert ${bad.length ? 'a-warn' : 'a-ok'}" style="margin:0">
+        ${f.map(x=>`${x.ok?'✓':'✗'} <b>${x.name}:</b> ${x.detail}`).join('<br>')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+['r_prod','r_batches'].forEach(id=>{ const e=$(id); if(e) e.addEventListener('input', fillJobPickers); });
+
+
+/* ============ MODULE 3 — stock and procurement ============
+   He does not count stock. Module 2 already records how many batches were mixed and
+   the recipe says what a batch eats, so:
+        on hand = opening (or last count) + delivered - poured × recipe
+   Counting is a correction, never the daily job.
+   Mirrors erp/db/007_stock_procurement.sql — change both together. */
+const STOCK_UNITS = { CEMENT:'bags', SAND:'m³', STONE:'t', PIGMENT:'kg' };
+const MAT_NAMES   = { CEMENT:'Cement', SAND:'Sand', STONE:'Stone', PIGMENT:'Pigment' };
+const STOCK_DEFAULTS = () => ({
+  CEMENT:{opening:0, lead:3, supplier:'', counted:null, countedAt:null},
+  SAND:  {opening:0, lead:2, supplier:'', counted:null, countedAt:null},
+  STONE: {opening:0, lead:2, supplier:'', counted:null, countedAt:null},
+  PIGMENT:{opening:0, lead:7, supplier:'', counted:null, countedAt:null}
+});
+let stockCfg   = store.get('tms_stockcfg', null) || STOCK_DEFAULTS();
+let deliveries = store.get('tms_deliveries', []);
+
+/* what one batch eats, in the unit the material is stored in */
+function perBatchUsage(code){
+  const r = setup.recipe, k = setup.consts;
+  switch(code){
+    case 'CEMENT':  return r.cement;
+    case 'SAND':    return r.sand / 1000;
+    case 'STONE':   return (r.stone / 1000) * k.stoneT;
+    case 'PIGMENT': return r.pigment;
+    default: return 0;
+  }
+}
+/* the price of ONE stock unit, from the price list which is kept per purchase unit */
+function pricePerStockUnit(code){
+  const k = setup.consts;
+  switch(code){
+    case 'SAND':    return materials.SAND / k.sandLoad;   // priced per load of k.sandLoad m³
+    case 'PIGMENT': return materials.PIGMENT / k.pigBag;  // priced per bag of k.pigBag kg
+    default:        return materials[code];
+  }
+}
+const batchesPouredSince = since =>
+  runs.filter(r => !since || r.date >= since).reduce((s,r)=>s + (+r.batches||0), 0);
+
+function materialOnHand(code){
+  const c = stockCfg[code] || {};
+  const base = (c.counted != null ? +c.counted : +c.opening) || 0;
+  const delivered = deliveries.filter(d => d.code===code && (!c.countedAt || d.date >= c.countedAt))
+                              .reduce((s,d)=>s + (+d.qty||0), 0);
+  return base + delivered - perBatchUsage(code) * batchesPouredSince(c.countedAt);
+}
+const dailyUsage = code => setup.cap.batches * perBatchUsage(code);
+
+function reorderReport(){
+  return Object.keys(STOCK_UNITS).map(code=>{
+    const onHand = materialOnHand(code), daily = dailyUsage(code);
+    const lead = +(stockCfg[code]?.lead ?? 3);
+    const cover = daily > 0 ? onHand / daily : null;
+    let verdict, detail, tone;
+    // Never cry OUT OF STOCK at a system that has simply not been set up. Not knowing
+    // and having none are different things, and only one of them stops the yard.
+    const known = !!stockCfg[code].countedAt || deliveries.some(d=>d.code===code);
+    if (!known){ verdict='not set up yet'; tone='ok';
+      detail='No opening stock recorded. Count what is in the yard and enter it below — '
+             +'after that the system keeps count from what you pour.'; }
+    else if (onHand <= 0){ verdict='OUT OF STOCK'; tone='bad';
+      detail='Nothing left. The yard stops until a delivery arrives — this supplier takes '+lead+' days.'; }
+    else if (cover === null){ verdict='no usage yet'; tone='ok';
+      detail='Nothing poured yet, so there is no rate to work from.'; }
+    else if (cover <= lead){ verdict='ORDER TODAY'; tone='bad';
+      detail=cover.toFixed(1)+' days left but delivery takes '+lead+' days — you run out before it arrives.'; }
+    else if (cover <= lead + 7){ verdict='order this week'; tone='warn';
+      detail=cover.toFixed(1)+' days left, '+lead+' days to deliver. Cutting it fine.'; }
+    else { verdict='fine'; tone='ok'; detail=cover.toFixed(1)+' days of cover.'; }
+    return { code, onHand, daily, cover, lead, verdict, detail, tone };
+  });
+}
+
+/* what the jobs already accepted will consume — including the real reject rate,
+   because broken pavers eat cement too */
+function committedMaterials(){
+  const units = jobs.filter(j=>['accepted','scheduled','laying'].includes(j.status))
+                    .reduce((s,j)=>s + (+j.units||0), 0);
+  const code = 'SQ200';
+  const batches = units ? units / (unitsPerBatch(code) * Math.max(actualYield(code), 0.01)) : 0;
+  return Object.keys(STOCK_UNITS).map(m=>{
+    const needed = batches * perBatchUsage(m), onHand = materialOnHand(m);
+    return { code:m, needed, onHand, short: Math.max(needed - onHand, 0) };
+  });
+}
+
+function renderStockPage(){
+  if(!$('reorderRows')) return;
+  if(!$('d_mat').options.length){
+    $('d_mat').innerHTML = Object.keys(STOCK_UNITS)
+      .map(c=>`<option value="${c}">${MAT_NAMES[c]} (${STOCK_UNITS[c]})</option>`).join('');
+    $('d_date').value = today0();
+  }
+  const rr = reorderReport();
+  $('reorderRows').innerHTML = rr.map(r=>`
+    <div class="alert ${r.tone==='bad'?'a-warn':(r.tone==='warn'?'a-warn':'a-ok')}" style="margin-bottom:9px">
+      <b>${MAT_NAMES[r.code]}: ${r.verdict}</b> —
+      ${r.onHand.toFixed(1)} ${STOCK_UNITS[r.code]} on hand, using ${r.daily.toFixed(2)} a day.<br>
+      <span class="mini">${r.detail}${stockCfg[r.code].countedAt
+        ? ' Counted ' + stockCfg[r.code].countedAt + ', less everything poured since.'
+        : ''}</span></div>`).join('');
+
+  $('committedRows').innerHTML = committedMaterials().map(c=>`
+    <tr><td>${MAT_NAMES[c.code]}</td>
+      <td class="num">${c.needed.toFixed(1)} ${STOCK_UNITS[c.code]}</td>
+      <td class="num">${c.onHand.toFixed(1)}</td>
+      <td class="num" style="color:${c.short>0?'#b3261e':'inherit'};font-weight:${c.short>0?'700':'400'}">
+        ${c.short > 0 ? c.short.toFixed(1)+ic(' — '+M(c.short*pricePerStockUnit(c.code))+' to buy') : '—'}</td></tr>`).join('');
+
+  const code = $('d_mat').value, qty = +$('d_qty').value, paid = +$('d_paid').value;
+  // The hint compares what he just paid with what he is currently pricing at — supplier prices.
+  $('d_hint').innerHTML = (SHOW_INTERNAL_COSTS && qty>0 && paid>0)
+    ? (function(){
+        const nu = paid/qty, ou = pricePerStockUnit(code);
+        const pct = ou ? (nu-ou)/ou*100 : 0;
+        return `That is <b>${M(nu)}</b> per ${STOCK_UNITS[code]}. You are currently pricing at ${M(ou)} — `
+          + (Math.abs(pct) < 0.5 ? 'no change.'
+             : `<b>${pct>0?'up':'down'} ${Math.abs(pct).toFixed(1)}%</b>. Booking this in re-prices every new quote`
+               + (pct>0 ? ' and flags the ones already out on the old price.' : '.'));
+      })()
+    : `Quantity in <b>${STOCK_UNITS[code]}</b>, and the total on the invoice.`;
+
+  $('deliveryRows').innerHTML = deliveries.length
+    ? `<table><thead><tr><th>Date</th><th>Material</th><th class="num">Qty</th><th class="num internal">Paid</th>
+        <th class="num internal">Per unit</th><th>Invoice</th><th></th></tr></thead><tbody>`
+      + deliveries.slice(0,10).map((d,i)=>`<tr><td>${d.date}</td><td>${MAT_NAMES[d.code]}</td>
+        <td class="num">${d.qty} ${STOCK_UNITS[d.code]}</td><td class="num internal">${M(d.paid)}</td>
+        <td class="num internal">${M(d.paid/(d.qty||1))}</td><td class="mini">${d.inv||''}</td>
+        <td><button class="btn dgr sm" onclick="delDelivery(${i})">×</button></td></tr>`).join('')
+      + '</tbody></table>'
+    : '<p class="mini">No deliveries booked in yet.</p>';
+
+  $('stockSetRows').innerHTML = Object.keys(STOCK_UNITS).map(c=>`
+    <div class="mat">
+      <div><b>${MAT_NAMES[c]}</b><div class="mini">held in ${STOCK_UNITS[c]}</div></div>
+      <div><label>Counted (${STOCK_UNITS[c]})</label>
+        <input type="number" step="0.5" value="${stockCfg[c].counted ?? stockCfg[c].opening}"
+               onchange="setCount('${c}', this.value)"></div>
+      <div><label>As at</label>
+        <input type="date" value="${stockCfg[c].countedAt || ''}"
+               onchange="stockCfg['${c}'].countedAt = this.value || null; saveStock()"></div>
+      <div><label>Lead time (days)</label>
+        <input type="number" min="0" step="1" value="${stockCfg[c].lead}"
+               onchange="stockCfg['${c}'].lead=+this.value||0; saveStock()"></div>
+    </div>`).join('');
+}
+
+/* A count resets the clock: pouring is only subtracted from the 'as at' date forward.
+   The date is set to today the first time, but stays editable — otherwise entering an
+   opening balance would silently discard every pour already logged before today. */
+function setCount(code, v){
+  stockCfg[code].counted = +v || 0;
+  if (!stockCfg[code].countedAt) stockCfg[code].countedAt = today0();
+  saveStock();
+}
+function saveStock(){ store.set('tms_stockcfg', stockCfg); renderStockPage(); }
+
+function logDelivery(){
+  const code=$('d_mat').value, qty=+$('d_qty').value, paid=+$('d_paid').value;
+  if(!(qty>0)){ alert('Enter how much was delivered.'); return; }
+  if(!(paid>=0)){ alert('Enter the total paid.'); return; }
+  const newUnit = paid/qty, oldUnit = pricePerStockUnit(code);
+  deliveries.unshift({date:$('d_date').value||today0(), code, qty, paid,
+                      inv:$('d_inv').value.trim(), by:$('d_by').value.trim()});
+  store.set('tms_deliveries', deliveries);
+  // the price actually paid becomes the price every new quote is built on
+  if (Math.abs(newUnit - oldUnit) > 0.005){
+    const k = setup.consts;
+    materials[code] = code==='SAND' ? newUnit * k.sandLoad
+                    : code==='PIGMENT' ? newUnit * k.pigBag
+                    : newUnit;
+    store.set(LS_MAT, materials);
+  }
+  $('d_qty').value=''; $('d_paid').value=''; $('d_inv').value='';
+  renderStockPage(); renderLines(); renderPriceList(); renderSaved();
+}
+function delDelivery(i){ deliveries.splice(i,1); store.set('tms_deliveries', deliveries); renderStockPage(); }
+
+['d_mat','d_qty','d_paid'].forEach(id=>{ const e=$(id); if(e){ e.addEventListener('input', renderStockPage);
+                                                               e.addEventListener('change', renderStockPage); } });
+
+
+/* ============ MODULE 4 — invoicing and payments ============
+   Modules 1-3 make sure the work is priced right, delivered on time and made from
+   material that is in the yard. None of it matters if the money never arrives.
+
+   ⚠️ VAT status, bank details and terms are NOT known. They start blank and every
+   invoice carries a warning until Thulo fills them in. Showing VAT when he is not
+   registered — or hiding it when he is — is a legal problem, not a display bug.
+   Mirrors erp/db/008_invoicing_payments.sql. */
+const INV_DEFAULTS = () => ({
+  terms:30, depositPct:50,
+  vatRegistered:false, vatNo:'', vatRate:15,
+  bank:'', accName:'', accNo:'', branch:'',
+  prefix:'TMS-INV-', confirmed:false
+});
+let invCfg   = store.get('tms_invcfg', null) || INV_DEFAULTS();
+let invoices = store.get('tms_invoices', []);
+
+/* Money is rounded to the cent at every boundary. Without this, a fully-paid invoice
+   reads "-0.00" and the outstanding total lands a cent away from the overdue total. */
+const cents      = n => Math.round((+n||0) * 100) / 100;
+const invPaid    = inv => cents((inv.payments||[]).reduce((s,p)=>s + (+p.amount||0), 0));
+const invBalance = inv => { const b = cents((+inv.total||0) - invPaid(inv));
+                            return Math.abs(b) < 0.005 ? 0 : b; };
+const invStatus  = inv => {
+  if (inv.written_off) return 'written off';
+  const bal = invBalance(inv);
+  if (bal <= 0) return 'paid';
+  if (invPaid(inv) > 0) return 'part paid';
+  return inv.sent ? 'sent' : 'draft';
+};
+const daysOverdue = inv => daysBetween(inv.due, today0());
+
+function invSettingsIncomplete(){
+  const missing = [];
+  if (!invCfg.confirmed)       missing.push('VAT status not confirmed');
+  if (!invCfg.bank || !invCfg.accNo) missing.push('bank details missing');
+  if (invCfg.vatRegistered && !invCfg.vatNo) missing.push('VAT number missing');
+  return missing;
+}
+
+function cashSummary(){
+  const live = invoices.filter(i=>!i.written_off);
+  const invoiced   = live.reduce((s,i)=>s + (+i.total||0), 0);
+  const collected  = live.reduce((s,i)=>s + invPaid(i), 0);
+  const outstanding= cents(live.filter(i=>i.sent && invBalance(i) > 0)
+                               .reduce((s,i)=>s + invBalance(i), 0));
+  const overdue    = cents(live.filter(i=>i.sent && invBalance(i) > 0 && daysOverdue(i) > 0)
+                               .reduce((s,i)=>s + invBalance(i), 0));
+  return { invoiced: cents(invoiced), collected: cents(collected), outstanding, overdue };
+}
+
+function agingReport(){
+  const buckets = [['Not yet due',i=>daysOverdue(i) <= 0],
+                   ['1–30 days',  i=>daysOverdue(i) >= 1  && daysOverdue(i) <= 30],
+                   ['31–60 days', i=>daysOverdue(i) >= 31 && daysOverdue(i) <= 60],
+                   ['61–90 days', i=>daysOverdue(i) >= 61 && daysOverdue(i) <= 90],
+                   ['Over 90 days',i=>daysOverdue(i) > 90]];
+  const open = invoices.filter(i=>!i.written_off && i.sent && invBalance(i) > 0);
+  return buckets.map(([name,f])=>{
+    const rows = open.filter(f);
+    return { name, count: rows.length, amount: cents(rows.reduce((s,i)=>s + invBalance(i), 0)) };
+  });
+}
+
+/* Finished jobs with no invoice against them. */
+const uninvoicedWork = () => jobs.filter(j=>j.status==='complete' && !invoices.some(i=>i.job_no===j.job_no));
+
+/* The job's price, which is the quote unless he has adjusted it on the job. Invoices
+   bill THIS, not the quote. */
+function jobValue(j){
+  if (j.price_override != null && !isNaN(j.price_override)) return +j.price_override;
+  const q = quotes.find(x=>x.quote_no===j.quote_no);
+  return q ? +q.total : 0;
+}
+
+function renderMoney(){
+  if(!$('cashTot')) return;
+  fillInvSettings();
+
+  const missing = invSettingsIncomplete();
+  $('invWarn').innerHTML = missing.length
+    ? `<div class="alert a-warn" style="margin-bottom:14px">
+         <b>Do not send an invoice yet — ${missing.join(', ')}.</b><br>
+         <span class="mini">Fill in "Your invoice details" at the bottom of this page. VAT in
+         particular: showing it when TM Stone is not registered, or leaving it off when it is,
+         is a tax problem. Nothing here has been assumed for you.</span></div>`
+    : '';
+
+  const c = cashSummary();
+  $('cashTot').innerHTML = `
+    <div><div class="lbl">Invoiced</div><div class="big">${M(c.invoiced)}</div>
+      <div class="brk">${invoices.filter(i=>!i.written_off).length} invoice(s)</div></div>
+    <div><div class="lbl">Still owed to you</div><div class="big">${M(c.outstanding)}</div>
+      <div class="brk">${c.overdue > 0.005
+        ? '<b style="color:#ffb4a8">'+M(c.overdue)+' of it is overdue</b>'
+        : 'nothing overdue'} · collected ${M(c.collected)}</div></div>`;
+
+  $('agingRows').innerHTML = agingReport().map(b=>`
+    <tr><td>${b.name}</td><td class="num">${b.count}</td>
+      <td class="num" style="${b.name!=='Not yet due'&&b.amount>0.005?'color:#b3261e;font-weight:700':''}">
+        ${M(b.amount)}</td></tr>`).join('');
+
+  const leak = uninvoicedWork();
+  $('leakRows').innerHTML = leak.length
+    ? `<div class="alert a-warn"><b>${leak.length} finished job${leak.length>1?'s have':' has'} no invoice —
+         ${M(leak.reduce((s,j)=>s + jobValue(j), 0))} you have done the work for and not asked for.</b><br>`
+      + leak.map(j=>`${j.job_no} — ${j.customer}, ${M(jobValue(j))}`).join('<br>') + '</div>'
+    : '<p class="mini">Nothing finished is sitting uninvoiced.</p>';
+
+  const open = jobs.filter(j=>!['lost'].includes(j.status));
+  $('i_job').innerHTML = open.length
+    ? open.map(j=>`<option value="${j.job_no}">${j.job_no} — ${j.customer} (${M(jobValue(j))})</option>`).join('')
+    : '<option value="">— no jobs yet —</option>';
+  if (!$('i_terms').value) $('i_terms').value = invCfg.terms;
+  renderInvHint();
+  renderInvList();
+}
+
+function renderInvHint(){
+  const j = jobs.find(x=>x.job_no===$('i_job').value);
+  if (!j){ $('i_hint').textContent = 'Create a job first — an invoice is raised against a job.'; return; }
+  const pct = Math.min(Math.max(+$('i_pct').value||100, 1), 100);
+  const sub = jobValue(j) * pct/100;
+  const vat = invCfg.vatRegistered ? sub * invCfg.vatRate/100 : 0;
+  const done = alreadyInvoiced(j.job_no), room = jobValue(j) - done;
+  const warn = done > 0.005
+    ? `<br><b>${M(done)} of ${M(jobValue(j))} already invoiced on this job — ${M(room)} left to bill.</b>`
+    : '';
+  $('i_hint').innerHTML = `${pct}% of ${j.job_no} = <b>${M(sub)}</b>`
+    + (invCfg.vatRegistered ? ` + VAT ${M(vat)} = <b>${M(sub+vat)}</b>` : ' — no VAT added')
+    + `, due in ${+$('i_terms').value||invCfg.terms} days.` + warn;
+}
+
+function alreadyInvoiced(job_no){
+  return invoices.filter(i=>i.job_no===job_no && !i.written_off)
+                 .reduce((s,i)=>s + (+i.subtotal||0), 0);
+}
+function raiseInvoice(){
+  const j = jobs.find(x=>x.job_no===$('i_job').value);
+  if (!j){ alert('Create a job first.'); return; }
+  const pct = Math.min(Math.max(+$('i_pct').value||100, 1), 100);
+  const sub = jobValue(j) * pct/100;
+  // A deposit followed by a 100% final billed 150% of the job with no warning.
+  const done = alreadyInvoiced(j.job_no), room = jobValue(j) - done;
+  if (done > 0.005 && sub > room + 0.005){
+    if (!confirm('You have already invoiced ' + M(done) + ' of ' + M(jobValue(j)) + ' on '
+        + j.job_no + '.\nThis would take the total to ' + M(done + sub)
+        + ' — ' + M(done + sub - jobValue(j)) + ' more than the job is worth.\n\nRaise it anyway?')) return;
+  }
+  if (!(sub > 0)){ alert('That job has no value on its quote.'); return; }
+  const vat = invCfg.vatRegistered ? sub * invCfg.vatRate/100 : 0;
+  const terms = +$('i_terms').value || invCfg.terms;
+  const due = new Date(Date.now() + terms*86400000).toISOString().slice(0,10);
+  invoices.unshift({
+    invoice_no: invCfg.prefix + String(seqNext('invoice', invoices, 'invoice_no')).padStart(4,'0'),
+    job_no: j.job_no, customer: j.customer, site: j.site || '',
+    kind: $('i_kind').value, pct, issued: today0(), due,
+    subtotal: sub, vat, total: sub + vat,
+    vat_shown: invCfg.vatRegistered, sent: false, payments: []
+  });
+  store.set('tms_invoices', invoices);
+  renderMoney();
+}
+
+function markSent(i){ invoices[i].sent = true; store.set('tms_invoices', invoices); renderMoney(); }
+function delInvoice(i){ if(confirm('Delete this invoice?')){ invoices.splice(i,1); store.set('tms_invoices', invoices); renderMoney(); } }
+function addPayment(i){
+  const inv = invoices[i], bal = invBalance(inv);
+  const raw = prompt(`Payment received for ${inv.invoice_no}.\nBalance is ${M(bal)}. How much?`, bal.toFixed(2));
+  if (raw === null) return;
+  const amt = +raw;
+  if (!(amt > 0)){ alert('Enter an amount greater than zero.'); return; }
+  if (amt > bal && !confirm(`That is ${M(amt-bal)} more than is owed. Record it anyway?`)) return;
+  inv.payments.push({ date: today0(), amount: amt, ref: prompt('Reference (optional)', '') || '' });
+  store.set('tms_invoices', invoices);
+  renderMoney();
+}
+
+function renderInvList(){
+  if (!invoices.length){ $('invRows').innerHTML = '<p class="mini">No invoices yet.</p>'; return; }
+  $('invRows').innerHTML = invoices.map((inv,i)=>{
+    const st = invStatus(inv), bal = invBalance(inv);
+    const late = inv.sent && bal > 0 && daysOverdue(inv) > 0;
+    return `<div class="mat" style="grid-template-columns:1fr;gap:8px">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:baseline">
+        <div><b>${inv.invoice_no} — ${inv.customer}</b>
+          <div class="mini">${inv.kind}${inv.pct<100?' ('+inv.pct+'%)':''} · ${inv.job_no}
+            · issued ${inv.issued} · due ${inv.due}
+            ${late ? '· <b style="color:#b3261e">'+daysOverdue(inv)+' days overdue</b>' : ''}</div></div>
+        <div style="text-align:right"><b>${M(inv.total)}</b>
+          <div class="mini">${bal > 0.005 ? M(bal)+' outstanding' : 'paid in full'} · ${st}</div></div>
+      </div>
+      ${inv.vat_shown ? '' : '<div class="mini">No VAT on this invoice.</div>'}
+      <div class="noprint" style="display:flex;gap:7px;flex-wrap:wrap">
+        <button class="btn sm" onclick="printInvoice(${i})">Print / PDF</button>
+        ${!inv.sent ? `<button class="btn sm" onclick="markSent(${i})">Mark sent</button>` : ''}
+        ${bal > 0 ? `<button class="btn sm" onclick="addPayment(${i})">Record a payment</button>` : ''}
+        <button class="btn dgr sm" onclick="delInvoice(${i})">Delete</button>
+      </div>
+      ${(inv.payments||[]).length ? '<div class="mini">'
+        + inv.payments.map(p=>`${p.date}: ${M(p.amount)}${p.ref?' ('+p.ref+')':''}`).join(' · ') + '</div>' : ''}
+    </div>`;
+  }).join('');
+}
+
+function fillInvSettings(){
+  if ($('s_bank').dataset.filled) return;
+  $('s_vatreg').value  = invCfg.vatRegistered ? 'yes' : 'no';
+  $('s_vatno').value   = invCfg.vatNo;    $('s_vatrate').value = invCfg.vatRate;
+  $('s_bank').value    = invCfg.bank;     $('s_accname').value = invCfg.accName;
+  $('s_accno').value   = invCfg.accNo;    $('s_branch').value  = invCfg.branch;
+  $('s_terms').value   = invCfg.terms;    $('s_dep').value     = invCfg.depositPct;
+  $('s_bank').dataset.filled = '1';
+}
+function saveInvSettings(){
+  invCfg.vatRegistered = $('s_vatreg').value === 'yes';
+  invCfg.vatNo   = $('s_vatno').value.trim();  invCfg.vatRate = +$('s_vatrate').value || 15;
+  invCfg.bank    = $('s_bank').value.trim();   invCfg.accName = $('s_accname').value.trim();
+  invCfg.accNo   = $('s_accno').value.trim();  invCfg.branch  = $('s_branch').value.trim();
+  invCfg.terms   = +$('s_terms').value || 30;  invCfg.depositPct = +$('s_dep').value || 50;
+  // "Confirmed" means a human answered the VAT question, either way — not that VAT is on.
+  invCfg.confirmed = !!(invCfg.bank && invCfg.accNo) && (!invCfg.vatRegistered || !!invCfg.vatNo);
+  store.set('tms_invcfg', invCfg);
+  renderMoney();
+  alert(invSettingsIncomplete().length
+    ? 'Saved, but still incomplete — see the warning at the top.'
+    : 'Saved. Invoices will carry these details.');
+}
+['i_job','i_pct','i_terms','i_kind'].forEach(id=>{ const e=$(id); if(e){
+  e.addEventListener('input', renderInvHint); e.addEventListener('change', renderInvHint); } });
+
+
+/* ============ PRINTED DOCUMENTS ============
+   Everything a customer sees is rendered here, never printed off the screen.
+   No library and no service: the browser's own print-to-PDF is free, offline,
+   and already on his phone. */
+const CO = (window.TMS_CONFIG && TMS_CONFIG.COMPANY) || {};
+const dmy = d => { if(!d) return ''; const x=new Date(d);
+  return x.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][x.getMonth()]+' '+x.getFullYear(); };
+
+function docHead(kind, meta){
+  return `<div class="dochead">
+    <div><div class="co">${CO.trading_as || 'TM STONE'}</div>
+      <div class="sub">${CO.name || ''}<br>
+        ${CO.address || ''}<br>
+        ${CO.phone ? 'Tel ' + CO.phone + ' · ' : ''}Reg ${CO.reg_no || ''}
+        ${invCfg.vatRegistered && invCfg.vatNo ? '<br>VAT ' + invCfg.vatNo : ''}</div></div>
+    <div><div class="kind">${kind}</div><div class="meta">${meta}</div></div>
+  </div>`;
+}
+/* Thulo, 24 Aug 2026: "SANS 1200MJ is for installation". The two standards cover
+   different things and must not be blurred — 1058:2021 is the paver, 1200MJ is the
+   laying. A supply-only document must not claim the installation standard at all. */
+function docFoot(withInstall, extra){
+  const std = 'Pavers manufactured to SANS 1058:2021, minimum 25 MPa.'
+            + (withInstall ? ' Installation to SANS 1200MJ.' : '');
+  return `<div class="docfoot">${extra || ''}
+    ${CO.founded ? 'Paving Lesotho since ' + CO.founded + '. ' : ''}${std}<br>
+    ${CO.name || ''}${CO.reg_no ? ' · Reg ' + CO.reg_no : ''}</div>`;
+}
+function showDoc(html){
+  $('printDoc').innerHTML = html;
+  document.body.classList.add('doc');
+  window.print();
+}
+window.addEventListener('afterprint', ()=>document.body.classList.remove('doc'));
+
+/* ---------- quote ---------- */
+function quoteDocHtml(q){
+  const rows = q.lines.map(l=>`<tr>
+      <td>${l.desc || l.name}<div style="font-size:9pt;color:#555">${l.area} m² · ${l.units.toLocaleString('en-US')} pavers${q.wastage?' incl. '+q.wastage+'% wastage':''}</div></td>
+      <td class="num">${l.units.toLocaleString('en-US')}</td>
+      <td class="num">${M(l.unit_price)}</td>
+      <td class="num">${M(l.line_total)}</td></tr>`).join('');
+  const area = q.lines.reduce((s,l)=>s + (+l.area||0), 0);
+  const ins = q.install || {mode:'none', charge:0};
+  const supply = q.lines.reduce((s,l)=>s + (+l.line_total||0), 0);
+  const insRow = (ins.mode && ins.mode!=='none' && ins.charge > 0)
+    ? `<tr><td>Installation — laying, ${ins.basis || ins.mode.replace(/_/g,' ')}
+         ${ins.days ? '<div style="font-size:9pt;color:#555">about '+Math.ceil(ins.days)+' working days on site</div>' : ''}</td>
+       <td class="num">—</td><td class="num">—</td><td class="num">${M(ins.charge)}</td></tr>`
+    : '';
+  const valid = new Date(new Date(q.created).getTime() + (q.valid_days||14)*86400000);
+  return docHead('QUOTATION',
+      `<b>${q.quote_no}</b><br>Date ${dmy(q.created)}<br>Valid until ${dmy(valid)}`)
+    + `<div class="docto"><div class="lbl">Quotation for</div>
+        <b>${q.customer}</b>${q.phone ? '<br>'+q.phone : ''}${q.site ? '<br>'+q.site : ''}</div>`
+    + `<table><thead><tr><th>Description</th><th class="num">Pavers</th>
+        <th class="num">Each</th><th class="num">Amount</th></tr></thead><tbody>${rows}${insRow}</tbody></table>`
+    + `<div class="doctot"><div><span>Total area</span><span>${area.toFixed(1)} m²</span></div>
+        ${insRow ? `<div><span>Pavers supplied</span><span>${M(supply)}</span></div>
+                    <div><span>Installation</span><span>${M(ins.charge)}</span></div>` : ''}
+        <div class="grand"><span>TOTAL</span><span>${M(q.total)}</span></div>
+        ${insRow ? '' : '<div style="font-size:9.5pt;color:#555"><span>Installation</span><span>not included</span></div>'}</div>`
+    + `<div class="docpay"><h4>Terms</h4>
+        This quotation is valid until ${dmy(valid)}. Prices are based on material costs at
+        ${dmy(q.created)} and may change if input costs move before acceptance.<br>
+        ${invCfg.depositPct ? invCfg.depositPct + '% deposit on acceptance, balance on completion.' : ''}</div>`
+    + docFoot(!!insRow);
+}
+function printSavedQuote(i){ showDoc(quoteDocHtml(quotes[i])); }
+
+/* the quote on screen, not yet saved */
+function printCurrentQuote(){
+  if(!lines.length){ alert('Add at least one item first.'); return; }
+  const markup=+$('markup').value||0, wast=+$('wastage').value||0;
+  let total=0;
+  const ql = lines.map(l=>{
+    const prod=PRODUCTS.find(p=>p.code===l.code);
+    const c=unitCosting(prod, materials, markup);
+    const u=Math.ceil((l.area/prod.face)*(1+wast/100));
+    total += u*c.price;
+    return {...l, units:u, unit_price:c.price, line_total:u*c.price};
+  });
+  const ins = currentInstall();
+  showDoc(quoteDocHtml({
+    quote_no:'(draft — not saved)', customer:$('cname').value.trim()||'—',
+    phone:$('cphone').value.trim(), site:$('csite').value.trim(),
+    lines:ql, total: total + ins.charge, wastage:wast, created:new Date().toISOString(),
+    install:{mode:ins.mode, charge:ins.charge, cost:ins.cost, days:ins.days, basis:ins.basis||''},
+    valid_days:+$('validdays').value||14
+  }));
+}
+
+/* ---------- invoice ---------- */
+function invoiceLines(inv){
+  const j = jobs.find(y=>y.job_no===inv.job_no);
+  const q = j && quotes.find(x=>x.quote_no===j.quote_no);
+  const sub = +inv.subtotal || 0;
+
+  // A full invoice may show the quote's own lines ONLY when they add up to what is being
+  // billed. They do not when installation is charged, or when the job price was adjusted —
+  // and a customer document whose lines miss its total is indefensible.
+  if (inv.pct >= 100 && q) {
+    const supply = q.lines.reduce((s,l)=>s + (+l.line_total||0), 0);
+    const ins    = (q.install && +q.install.charge) || 0;
+    const lines  = q.lines.map(l=>({ desc:(l.desc||l.name),
+      detail:`${l.area} m² · ${(+l.units).toLocaleString('en-US')} pavers`,
+      qty:l.units, price:l.unit_price, total:l.line_total }));
+    if (ins > 0) lines.push({ desc:'Installation — laying'
+        + (q.install.basis ? ', ' + q.install.basis : ''), detail:'', qty:1, price:ins, total:ins });
+    const listed = supply + ins;
+    const diff = sub - listed;
+    // job price adjusted on the job — show it as its own line rather than silently differ
+    if (Math.abs(diff) > 0.005) lines.push({
+      desc: diff < 0 ? 'Adjustment agreed for this job' : 'Additional agreed for this job',
+      detail: 'Quoted ' + M(listed), qty:1, price:diff, total:diff });
+    return lines;
+  }
+
+  const label = inv.kind==='deposit' ? `Deposit — ${inv.pct}% of ${inv.job_no}`
+              : inv.kind==='progress' ? `Progress payment — ${inv.pct}% of ${inv.job_no}`
+              : `${inv.pct}% of ${inv.job_no}`;
+  return [{ desc:label, detail: q ? 'Against quotation '+q.quote_no : '', qty:1,
+            price:sub, total:sub }];
+}
+
+/* Does the work this invoice bills for include laying? Drives whether SANS 1200MJ
+   may be cited — see docFoot. */
+function invoiceIncludesInstall(inv){
+  const j = jobs.find(y=>y.job_no===inv.job_no);
+  const q = j && quotes.find(x=>x.quote_no===j.quote_no);
+  return !!(q && q.install && q.install.mode && q.install.mode !== 'none' && q.install.charge > 0);
+}
+
+function invoiceDocHtml(inv){
+  const missing = invSettingsIncomplete();
+  const paid = invPaid(inv), bal = invBalance(inv);
+  const rows = invoiceLines(inv).map(l=>`<tr>
+      <td>${l.desc}${l.detail?'<div style="font-size:9pt;color:#555">'+l.detail+'</div>':''}</td>
+      <td class="num">${(+l.qty).toLocaleString('en-US')}</td>
+      <td class="num">${M(l.price)}</td><td class="num">${M(l.total)}</td></tr>`).join('');
+  const overdue = inv.sent && bal > 0 && daysOverdue(inv) > 0;
+
+  return (missing.length ? `<div class="docstop">
+      <b>DO NOT SEND THIS INVOICE.</b><br>
+      ${missing.join('; ')}. This document is incomplete and must not go to a customer.
+      Fill in the invoice details in the system first.</div>` : '')
+    + docHead('INVOICE', `<b>${inv.invoice_no}</b><br>Issued ${dmy(inv.issued)}<br>
+        Due ${dmy(inv.due)}${overdue ? ' <b>(' + daysOverdue(inv) + ' days overdue)</b>' : ''}`)
+    + `<div class="docto"><div class="lbl">Invoice to</div>
+        <b>${inv.customer}</b>${inv.site ? '<br>'+inv.site : ''}
+        ${inv.job_no ? '<br><span style="font-size:9.5pt;color:#555">Job '+inv.job_no+'</span>' : ''}</div>`
+    + `<table><thead><tr><th>Description</th><th class="num">Qty</th>
+        <th class="num">Each</th><th class="num">Amount</th></tr></thead><tbody>${rows}</tbody></table>`
+    + `<div class="doctot">
+        <div><span>Subtotal</span><span>${M(inv.subtotal)}</span></div>
+        ${inv.vat_shown
+          ? `<div><span>VAT @ ${invCfg.vatRate}%</span><span>${M(inv.vat)}</span></div>`
+          : `<div style="font-size:9.5pt;color:#555"><span>VAT</span><span>not applicable</span></div>`}
+        <div class="grand"><span>TOTAL</span><span>${M(inv.total)}</span></div>
+        ${paid > 0 ? `<div><span>Paid to date</span><span>− ${M(paid)}</span></div>
+          <div class="grand"><span>BALANCE DUE</span><span>${M(bal)}</span></div>` : ''}</div>`
+    + `<div class="docpay"><h4>How to pay</h4>
+        ${invCfg.bank ? `${invCfg.bank}<br>${invCfg.accName || ''}<br>
+           Account ${invCfg.accNo || ''}${invCfg.branch ? ' · Branch ' + invCfg.branch : ''}`
+          : '<b>[ bank details not set ]</b>'}<br>
+        <span style="font-size:9.5pt">Please use <b>${inv.invoice_no}</b> as your reference.
+        Payment due by ${dmy(inv.due)}.</span></div>`
+    + docFoot(invoiceIncludesInstall(inv));
+}
+
+/* A price list you hand to a contractor is a customer document. Printing the screen
+   put "Cost to make M65,384.16 · Profit M14,384.52" on the sheet he was told to leave
+   with every contractor in Maseru, with no letterhead on it either. */
+function printPriceList(){
+  const markup = +$('markup').value || 40;
+  const rows = PRODUCTS.map(prod=>{
+    const c = unitCosting(prod, materials, markup);
+    return `<tr><td>${prod.name}<div style="font-size:9pt;color:#555">${prod.code} · ${(1/prod.face).toFixed(0)} per m²</div></td>
+      <td class="num">${M(c.price)}</td><td class="num">${M(c.perM2)}</td></tr>`;
+  }).join('');
+  const d = new Date();
+  showDoc(docHead('PRICE LIST',
+      `Effective ${dmy(d.toISOString())}<br><span style="font-size:9pt">Prices held for 14 days</span>`)
+    + `<table><thead><tr><th>Product</th><th class="num">Per paver</th><th class="num">Per m²</th></tr></thead>
+       <tbody>${rows}</tbody></table>`
+    + `<div class="docpay"><h4>Terms</h4>
+        Prices are for supply from the yard and exclude installation and delivery.
+        Quoted on current material costs and held for 14 days from the date above.
+        Volume pricing is available for trade accounts — please ask.</div>`
+    + docFoot(false));
+}
+
+function printInvoice(i){ showDoc(invoiceDocHtml(invoices[i])); }
+
+
+/* ============ per-job price adjustment ============
+   Thulo, 24 Aug 2026: "On the job part, that's where I price when I need to increase
+   or decrease my pricing." So the quote's mark-up is the starting point, not the final
+   word — the job is where the real number is set. The quoted figure is never
+   overwritten, so the two can always be compared.
+
+   MARK-UP on cost (× 1.40), never margin — see the note on unitCosting. */
+const MARKUP_FLOOR = 30;   // mirrors settings.min_markup_pct in 002_roles_and_rls.sql
+
+function jobQuoted(j){ const q = quotes.find(x=>x.quote_no===j.quote_no); return q ? +q.total : 0; }
+function jobCost(j){
+  const q = quotes.find(x=>x.quote_no===j.quote_no);
+  if (!q) return 0;
+  const supply = q.lines.reduce((s,l)=>s + (+l.units||0) * (+l.unit_cost||0), 0);
+  return supply + ((q.install && +q.install.cost) || 0);
+}
+function jobMarkup(j){
+  const c = jobCost(j); if (!c) return null;
+  return (jobValue(j) - c) / c * 100;
+}
+/* A phone set to a comma-decimal locale renders 30000.00 as "30000,00", and plain
+   parseFloat would read that as 30000 and quietly lose the cents. Normalise first. */
+function parseMoney(v){
+  let t = String(v == null ? '' : v).replace(/[\s\u00a0]/g,'');
+  if (t.includes(',') && !t.includes('.')) t = t.replace(',', '.');   // comma is the decimal point
+  else t = t.replace(/,/g, '');                                       // comma is a thousands separator
+  const n = parseFloat(t);
+  return isNaN(n) ? null : n;
+}
+function setJobPrice(i, v){
+  const j = jobs[i], val = parseMoney(v);
+  j.price_override = val;                          // blank restores the quoted price
+  store.set('tms_jobs', jobs);
+  renderJobList(); renderToday();
+  if (typeof renderMoney === 'function') renderMoney();
+}
+function priceLine(i, j){
+  const quoted = jobQuoted(j), now = jobValue(j), cost = jobCost(j);
+  const mk = jobMarkup(j), diff = now - quoted;
+  let verdict, tone;
+  if (mk === null){ verdict = 'No cost on the quote to compare against.'; tone = 'a-ok'; }
+  else if (now <= cost){
+    tone = 'a-warn';
+    verdict = `<b>This is at or below what the job costs you to do (${M(cost)}).</b> `
+            + `You would be paying to work.`;
+  } else if (mk < MARKUP_FLOOR){
+    tone = 'a-warn';
+    verdict = `Mark-up <b>${mk.toFixed(1)}%</b> — below your ${MARKUP_FLOOR}% floor. `
+            + `Costs you ${M(cost)}, leaves ${M(now-cost)}.`;
+  } else {
+    tone = 'a-ok';
+    verdict = `Mark-up <b>${mk.toFixed(1)}%</b> · costs ${M(cost)}, leaves <b>${M(now-cost)}</b>.`;
+  }
+  // The price input keeps working; only the cost/mark-up verdict is internal.
+  return `<div class="alert ${SHOW_INTERNAL_COSTS ? tone : 'a-ok'}" style="margin:0">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:7px">
+        <div style="flex:1;min-width:150px"><label>Price for this job (M)</label>
+          <input type="text" inputmode="decimal" value="${now.toFixed(2)}"
+                 onchange="setJobPrice(${i}, this.value)"></div>
+        <div class="mini">
+          Quoted ${M(quoted)}${Math.abs(diff) > 0.005
+            ? ` · <b>${diff > 0 ? 'up' : 'down'} ${M(Math.abs(diff))}</b>` : ' · unchanged'}
+          ${j.price_override != null
+            ? ` · <a href="#" onclick="setJobPrice(${i},''); return false;">back to quoted</a>` : ''}</div>
+      </div>
+      ${ic(verdict)}</div>`;
+}
+
+function addOverhead(){
+  const n=$('oh_name').value.trim(); if(!n){alert('Name the cost.');return;}
+  setup.overheads.push({name:n, cat:$('oh_cat').value, amt:+$('oh_amt').value||0});
+  $('oh_name').value=''; $('oh_amt').value=''; saveSetup(true);
+}
+function delOverhead(i){ setup.overheads.splice(i,1); saveSetup(true); }
+function addMould(){
+  setup.moulds.push({product:$('md_prod').value, cost:+$('md_cost').value||0, pours:+$('md_pours').value||1});
+  $('md_cost').value=''; saveSetup(true);
+}
+function saveSetup(silent){
+  setup.cap={days:+$('cap_days').value||22, batches:+$('cap_batches').value||1, yield:+$('cap_yield').value||432};
+  setup.recipe={cement:+$('br_cem').value||0, sand:+$('br_sand').value||0, stone:+$('br_stone').value||0, pigment:+$('br_pig').value||0};
+  setup.consts={sandLoad:+$('k_sand').value||12, stoneT:+$('k_stone').value||1.6, pigBag:+$('k_pig').value||25, cemBag:+$('k_cem').value||50};
+  store.set('tms_setup', setup);
+  renderSetup(); renderLines(); renderPriceList(); if(typeof renderTrade==='function') renderTrade();
+  if(!silent) alert('Saved. Every price in the system now uses these figures.');
+}
+function resetSetup(){ setup=JSON.parse(JSON.stringify(SETUP_DEFAULTS)); store.set('tms_setup',setup); saveSetup(true); }
+['cap_days','cap_batches','cap_yield','br_cem','br_sand','br_stone','br_pig','k_sand','k_stone','k_pig','k_cem']
+  .forEach(id=>{const e=$(id); if(e) e.addEventListener('change',()=>saveSetup(true));});
+['wk_prod','wk_markup'].forEach(id=>{const e=$(id); if(e){e.addEventListener('input',renderWorking);e.addEventListener('change',renderWorking);}});
+
+fillCrewGround(); renderCrews(); renderGround(); renderSetup(); renderTrade(); renderJobsPage(); renderStockPage(); renderMoney();
+/* renderInstallSettings() first: it fills the quote screen's rate box from the saved
+   rate card, and renderInstall()/renderLines() read that box. Called the other way
+   round, the first render of a restored M120 card still charged the shipped M90. */
+renderInstallSettings(); renderLines(); renderMaterials(); renderPriceList(); renderInstall();
+
+/* The switch, applied. Everything marked .internal — static or generated — is
+   hidden from the screen and from print in one place. */
+if (!SHOW_INTERNAL_COSTS) document.body.classList.add('hide-internal');
+
+/* show whether we are on the shared database or this device only */
+(function(){
+  const el=document.getElementById('modeLbl'); if(!el||!window.TMS) return;
+  el.textContent = TMS.mode==='cloud' ? 'QUOTE BUILDER · SHARED' : 'QUOTE BUILDER · THIS DEVICE';
+  el.title = TMS.mode==='cloud'
+    ? 'Connected to the shared TM Stone database — everyone sees the same quotes.'
+    : 'Not connected yet: quotes are saved on this device only. Fill in config.js to go shared.';
+})();
+</script>
+<div id="printDoc"></div>
+</body>
+</html>

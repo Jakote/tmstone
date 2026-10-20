@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TM Stone Solutions — Wetcast Paving, Maseru</title>
+<link rel="preload" as="image" href="assets/hero-1.webp" type="image/webp" fetchpriority="high">
+
+<link rel="canonical" href="https://tmstone.co.ls/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TM Stone Solutions">
+<meta property="og:locale" content="en_LS">
+<meta property="og:url" content="https://tmstone.co.ls/">
+<meta property="og:title" content="TM Stone Solutions — Wetcast Paving, Maseru">
+<meta property="og:description" content="We manufacture our own wetcast pavers in Maseru and lay them ourselves, from a single driveway to a commercial forecourt. SANS 1058:2021, minimum 25 MPa.">
+<meta property="og:image" content="https://tmstone.co.ls/assets/hero-1.jpg">
+<meta property="og:image:width" content="1800">
+<meta property="og:image:height" content="1013">
+<meta property="og:image:alt" content="Aerial view of a paved commercial car park laid by TM Stone in Maseru">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#a63b00">
+<meta name="description" content="TM Stone Solutions (Pty) Ltd — wetcast paving manufacture and installation in Maseru, Lesotho. SANS 1058:2021 compliant, 25 MPa.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='0' width='100' height='100' fill='%23c2532a'/><text x='50' y='68' font-size='52' font-weight='bold' text-anchor='middle' fill='white' font-family='sans-serif'>TM</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  /* Industrial Precision — the design system built for TM Stone on 28 August.
+     Rugged professionalism: the geometry of a paver, the precision of an instrument. */
+  --stone:#121416;      /* charcoal-deep  */
+  --stone2:#1a1c1e;
+  --slate:#4A4E54;      /* slate-gray, structural */
+  --sand:#fff8f6;       /* surface        */
+  --sand2:#ffe9e2;      /* surface-container */
+  --line:#DDE1E6;       /* border-muted   */
+  --ink:#261813;        /* on-surface     */
+  --ink2:#594138;       /* on-surface-variant */
+  --ink3:#8d7166;       /* outline        */
+  --ac:#f26522;         /* DECORATION ONLY. 3.15:1 on white, 3.00:1 on --sand — it fails
+                           WCAG AA for text at every size. Use it for focus rings, range
+                           accents and fills that carry no words. */
+  --ac2:#a63b00;        /* TEXT-SAFE ORANGE. 6.47:1 on white, 6.16:1 on --sand. Anything
+                           that is text, or sits behind text, uses this one. */
+  --ok:#2D6A4F;         /* success-green  */
+  --warn:#FF7A3D;       /* caution-orange */
+  --r:0;                /* sharp. Every corner. The system is explicit about this. */
+  --gutter:24px;
+}
+/* The header is sticky at 60px. Without scroll-padding-top, every in-page jump puts the
+   target section's top edge at y=0 and the header sits on the first 60px of it, which on a
+   phone is the section's 34px of padding plus 26px of its own heading. Six anchors do this:
+   both nav links, both hero buttons and both quote CTAs. 68px clears the header with room. */
+html{scroll-behavior:smooth;scroll-padding-top:68px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--sand);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+.w{max-width:1140px;margin:0 auto;padding:0 clamp(16px,4vw,36px)}
+h1,h2,h3,.cond{font-family:'Montserrat',sans-serif;text-transform:uppercase;font-weight:800;letter-spacing:-.02em}
+h2,h3{font-weight:700}
+/* JetBrains Mono is reserved for figures and technical labels. It is the signal that the
+   calculator is an instrument rather than a marketing widget. */
+.mono,.num,#total,#sellp,#units,#matp,#persqm{font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+.bar{background:var(--ac2);color:#fff;text-align:center;font-size:12px;padding:8px 14px;font-weight:500}
+.bar a{color:#fff;font-weight:700}
+
+nav{position:sticky;top:0;z-index:60;background:rgba(43,39,37,.97);backdrop-filter:blur(10px)}
+.nb{max-width:1140px;margin:0 auto;padding:0 clamp(16px,4vw,36px);height:60px;display:flex;align-items:center;justify-content:space-between}
+.lg{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff}
+.lg-m{width:36px;height:36px;border-radius:0;background:var(--ac2);display:grid;place-items:center;font-family:'Montserrat',sans-serif;font-weight:700;font-size:17px}
+.lg b{font-family:'Montserrat',sans-serif;font-size:19px;display:block;line-height:1}
+.lg span{font-size:10px;color:#8c939a;letter-spacing:.16em}
+nav ul{display:flex;gap:2px;list-style:none;align-items:center}
+nav a.nl{color:#c9cfd5;text-decoration:none;font-size:13px;font-weight:500;padding:8px 13px;border-radius:0}
+nav a.nl:hover{background:rgba(255,255,255,.08);color:#fff}
+.ncta{background:var(--ac2);color:#fff!important;font-family:'Montserrat',sans-serif;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:10px 18px;border-radius:0;text-decoration:none;font-size:12px}
+.ncta:hover{background:var(--ac2)}
+.ham{display:none;background:none;border:0;color:#fff;font-size:22px;cursor:pointer;/* 44px minimum tap target. It was 29px: the only control that opens navigation on a
+   phone, and too small to hit reliably. Padding rather than height so the glyph stays put. */min-width:44px;min-height:44px;display:none;align-items:center;justify-content:center;padding:0}
+
+.hero{position:relative;min-height:84vh;display:grid;align-items:center;color:#fff;overflow:hidden;
+ background:#1c1816}
+/* The hero is three of Thulo's own drone photographs, cross-fading with a slow push.
+   This replaced a phone video on 21 Sept: the footage was 848x478 handheld in flat
+   light, and these stills are sharper, lighter and better lit. Motion without the
+   quality cost. */
+.hero-bed{position:absolute;inset:0;z-index:0}
+
+.hero-bed figure{position:absolute;inset:0;margin:0;background-size:cover;background-position:center;
+ opacity:0;animation:heroCycle 21s infinite;will-change:transform,opacity}
+.hero-bed figure:nth-child(1){background-image:url('assets/hero-1.jpg');
+  background-image:image-set(url('assets/hero-1.webp') type('image/webp'),url('assets/hero-1.jpg') type('image/jpeg'));animation-delay:0s}
+.hero-bed figure:nth-child(2){background-image:url('assets/hero-2.jpg');
+  background-image:image-set(url('assets/hero-2.webp') type('image/webp'),url('assets/hero-2.jpg') type('image/jpeg'));animation-delay:7s}
+.hero-bed figure:nth-child(3){background-image:url('assets/hero-3.jpg');
+  background-image:image-set(url('assets/hero-3.webp') type('image/webp'),url('assets/hero-3.jpg') type('image/jpeg'));animation-delay:14s}
+@keyframes heroCycle{
+  0%   {opacity:0; transform:scale(1.04)}
+  6%   {opacity:1}
+  30%  {opacity:1}
+  36%  {opacity:0}
+  100% {opacity:0; transform:scale(1.14)}
+}
+.hero-veil{position:absolute;inset:0;z-index:2;
+ background:linear-gradient(rgba(28,24,22,.58),rgba(28,24,22,.78))}
+.hero .w{position:relative;z-index:3}
+@media(prefers-reduced-motion:reduce){
+  .hero-bed figure{animation:none}
+  .hero-bed figure:nth-child(1){opacity:1}
+}
+/* padding-block, not the padding shorthand. `padding:90px 0` set the horizontal
+   padding to zero and wiped out the gutter .hero-in inherits from .w, so at 375px
+   the headline, the body copy and both buttons sat flush against the screen edge.
+   Every other section on the page had 16px. This one had none, for that reason. */
+.hero-in{padding-block:90px}
+.kick{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.2em;background:var(--ac2);padding:6px 14px;border-radius:0;margin-bottom:20px}
+.hero h1{font-size:clamp(36px,6.5vw,68px);font-weight:700;line-height:.98;margin-bottom:16px;max-width:16ch}
+.hero p{font-size:clamp(15px,1.6vw,18px);color:#e6ddd4;max-width:54ch;line-height:1.7;margin-bottom:28px}
+.hb{display:flex;gap:11px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:15px 28px;border-radius:0;font-weight:700;font-size:13.5px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;border:none;cursor:pointer;font-family:'Montserrat',sans-serif;transition:.18s}
+.b1{background:var(--ac2);color:#fff}
+.b1:hover{background:var(--ac2);box-shadow:5px 5px 0 rgba(18,20,22,.22)}
+.b2{color:#fff;border:2px solid rgba(255,255,255,.85)}
+.b2:hover{background:#fff;color:var(--stone)}
+
+.specs{background:var(--stone);color:#e6ddd4;padding:20px 0}
+.specs-g{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;text-align:center}
+.specs .v{font-family:'Montserrat',sans-serif;font-size:27px;font-weight:700;color:#fff;line-height:1}
+.specs .k{font-size:10.5px;color:#a2968c;letter-spacing:.11em;margin-top:5px;text-transform:uppercase}
+
+section{padding:clamp(56px,9vh,88px) 0}
+.lbl{font-size:11px;font-weight:700;letter-spacing:.2em;color:var(--ac2);margin-bottom:10px}
+.tit{font-size:clamp(28px,4.2vw,44px);font-weight:700;line-height:1.05;margin-bottom:14px}
+.dsc{font-size:15px;color:var(--ink2);max-width:58ch;line-height:1.75}
+
+/* calculator */
+.calc-sec{background:var(--stone);color:#e9e1d8}
+.calc-sec .tit{color:#fff}.calc-sec .dsc{color:#8c939a}
+.calc{display:grid;grid-template-columns:1fr 1.15fr;gap:16px;margin-top:34px;align-items:start}
+.pane{background:var(--stone2);border:1px solid var(--slate);border-radius:0;padding:26px}
+.pane h3{font-size:19px;color:#fff;margin-bottom:4px}
+.pane .sub{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11.5px;letter-spacing:.06em;color:#9aa1a8;margin-bottom:20px}
+label{display:block;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#a2968c;margin:14px 0 6px}
+input[type=number],select{width:100%;padding:14px 15px;border:2px solid var(--slate);border-radius:0;background:var(--stone);color:#fff;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:16px;font-variant-numeric:tabular-nums;outline:none;transition:border-color .15s}
+input[type=number]:focus,select:focus{border-color:var(--ac)}
+.pane label{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#b7bcc2}
+input[type=range]{width:100%;accent-color:var(--ac);margin-top:6px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.out{background:var(--stone);border:1px solid var(--slate);border-radius:0;padding:26px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.big{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:clamp(34px,5.4vw,52px);font-weight:700;color:var(--ac2);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.big small{display:block;font-family:'Inter';font-size:12px;font-weight:500;color:#9aa1a8;text-transform:none;letter-spacing:0;margin-top:5px}
+.brk{margin-top:18px;border-top:1px solid var(--slate);padding-top:14px}
+.br{display:flex;justify-content:space-between;padding:9px 0;font-size:13px;color:#aeb4ba}
+.br span{font-family:'Inter',sans-serif}
+.br b{color:#fff;font-weight:500;font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.br.tot{border-top:1px solid var(--slate);margin-top:10px;padding-top:13px;font-size:15px}
+.br.tot b{color:var(--ac2)}
+.alert{margin-top:16px;background:rgba(201,138,23,.13);border:1px solid rgba(201,138,23,.4);border-radius:0;padding:13px 15px;font-size:12.5px;line-height:1.6;color:#e8d5ae}
+.alert b{color:#f3d79a}
+.mini{font-size:11.5px;color:#8d8279;margin-top:12px;line-height:1.6}
+
+/* gallery */
+.gal{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:210px;gap:11px;margin-top:32px}
+.gp{border-radius:0;overflow:hidden;background:var(--sand2)}
+.gp img{width:100%;height:100%;object-fit:cover;transition:.45s}
+.gp:hover img{transform:scale(1.05)}
+.gp.wide{grid-column:span 2}
+
+/* services */
+.svc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:32px}
+.sc{background:#fff;border:1px solid var(--line);border-radius:0;padding:24px}
+.sc h3{font-size:19px;margin-bottom:8px;color:var(--ac2)}
+.sc p{font-size:13.5px;color:var(--ink2);line-height:1.7}
+
+.cta{background:var(--ac2);color:#fff;border-radius:0;padding:clamp(28px,5vw,46px);display:grid;grid-template-columns:1.3fr auto;gap:26px;align-items:center;margin-bottom:40px}
+.cta h2{font-size:clamp(24px,3.4vw,34px);margin-bottom:8px}
+.cta p{font-size:14px;color:#ffe2d6;line-height:1.7}
+.cta .b1{background:#fff;color:var(--ac2)}
+.cta .b1:hover{background:#ffe9e2}
+
+footer{background:var(--stone);color:#9aa1a8;padding:34px 0;font-size:12.5px;text-align:center}
+footer a{color:var(--ac2);text-decoration:none;font-weight:600}
+footer .r{margin-top:8px;font-size:11.5px;color:#8d8178}
+
+@media(max-width:900px){.calc{grid-template-columns:1fr}.specs-g{grid-template-columns:1fr 1fr}.svc,.gal{grid-template-columns:1fr 1fr}.gp.wide{grid-column:span 2}.cta{grid-template-columns:1fr}}
+@media(max-width:600px){.hero-in{padding-block:56px}.hero{min-height:76vh}.gp.wide{grid-column:span 1}nav ul{display:none}nav ul.open{display:flex}.ham{display:flex}.svc,.gal{grid-template-columns:1fr}.row2{grid-template-columns:1fr}}
+
+/* Motion, kept honest. CONTENT IS NEVER HIDDEN BY JAVASCRIPT.
+   The reveal is a pure-CSS scroll-driven animation: browsers that support
+   animation-timeline get the motion, everything else simply shows the page. There is no
+   state in which a failed script leaves a customer looking at a blank section. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .calc-sec, .gal .gp, .svc .sc, .specs-g > div, section h2 {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+    @keyframes rise { from { opacity:0; transform:translateY(24px) } to { opacity:1; transform:none } }
+  }
+}
+.specs-g > div{transition:transform .35s ease}
+.specs-g > div:hover{transform:translateY(-4px)}
+.gal .gp{overflow:hidden}
+.gal .gp img{transition:transform .9s cubic-bezier(.2,.7,.3,1);display:block}
+.gal .gp:hover img{transform:scale(1.06)}
+.btn{transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+.btn:hover{}
+@media(prefers-reduced-motion:reduce){
+  .gal .gp:hover img,.specs-g > div:hover,.btn:hover{transform:none}
+}
+
+/* ---- 22 September: proof first, and a phone number that never scrolls away ----
+   The gallery now sits above the calculator. A customer judges a paver by the work,
+   not by a price they cannot yet contextualise. The hero drops its spec sentence on
+   phones because the spec bar repeats it verbatim two hundred pixels below. */
+@media(max-width:600px){
+  .sm-hide{display:none}
+  .hb{gap:10px}
+  .hb .btn{flex:1 1 100%;justify-content:center}
+  body{padding-bottom:64px}
+
+  /* Getting the work above the fold. Before this, the first photograph sat 403px
+     below the fold on a 812px screen: a customer had to scroll half a screen past
+     the hero, the spec bar and a section heading before seeing any paving. The
+     headline, the hero and the gallery preamble each give up a little. */
+  .hero{min-height:60vh}
+  .hero-in{padding-block:40px}
+  .hero h1{font-size:30px;margin-bottom:12px}
+  .hero p{margin-bottom:20px}
+  section{padding-block:34px}
+  #work .lbl{margin-bottom:6px}
+  #work .tit{font-size:24px;margin-bottom:8px}
+  #work .dsc{font-size:14px;margin-bottom:16px}
+}
+.callbar{display:none}
+@media(max-width:600px){
+  .callbar{
+    display:grid;grid-template-columns:1fr 1fr;gap:1px;
+    position:fixed;left:0;right:0;bottom:0;z-index:60;
+    background:rgba(255,255,255,.14);
+    padding-bottom:env(safe-area-inset-bottom, 0px);
+  }
+  .cb{display:flex;align-items:center;justify-content:center;min-height:52px;
+      font-family:'Montserrat',sans-serif;font-weight:700;font-size:13.5px;
+      letter-spacing:.06em;text-transform:uppercase;text-decoration:none}
+  .cb1{background:var(--ac2);color:#fff}
+  .cb2{background:var(--stone);color:#fff}
+}
+
+/* The footer phone number and WhatsApp link were 15px tall inline text. They are contact
+   actions, not prose, and on a phone a 15px target is a miss waiting to happen. The sticky
+   bar covers the common case; this covers the customer who scrolled to the bottom to find
+   the number deliberately. */
+footer a[href^="tel:"], footer a[href*="wa.me"]{
+  display:inline-flex;align-items:center;min-height:44px
+}
+
+/* ---- The mobile menu, rebuilt. Two bugs in one rule, both visible on a real phone ----
+
+   1. It was pinned at a hardcoded `top:60px`. The header does not start at 60px: the preview
+      banner above it wraps to two lines on a 375px screen, so the header occupies 45 to 105px
+      and the panel opened inside it. Anchored to the header itself now, so it lands correctly
+      whatever the banner does.
+
+   2. The items had no gap and no height. "Get a Quote" overlapped "Instant Quote" by 11px, and
+      every item was about 20px tall: the primary navigation on a phone, at under half a thumb.
+
+   Missed because I never opened the menu. Jakote opened it on his phone in ten seconds. */
+@media(max-width:600px){
+  /* No position:relative here. nav is already position:sticky, which is a positioned
+     ancestor, so the panel anchors correctly. Setting relative would have silently
+     killed the sticky header on phones. */
+  nav ul{
+    position:absolute;top:100%;left:0;right:0;
+    background:var(--stone);flex-direction:column;align-items:stretch;
+    gap:6px;padding:10px 14px 18px;text-align:center;
+    box-shadow:0 18px 34px rgba(0,0,0,.42);
+  }
+  nav ul li{display:block}
+  nav ul a{display:flex;align-items:center;justify-content:center;min-height:48px;font-size:15px}
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": "https://tmstone.co.ls/#business",
+  "name": "TM Stone Solutions (Pty) Ltd",
+  "alternateName": "TM Stone",
+  "url": "https://tmstone.co.ls/",
+  "image": "https://tmstone.co.ls/assets/hero-1.jpg",
+  "description": "Manufacture and installation of wetcast concrete pavers in Maseru, Lesotho. SANS 1058:2021 compliant, minimum 25 MPa.",
+  "telephone": "+26650659716",
+  "foundingDate": "2020",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Ha Tsosane Pela Boitumela",
+    "addressLocality": "Maseru",
+    "addressCountry": "LS"
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "Lesotho"
+  },
+  "knowsAbout": [
+    "Wetcast paving",
+    "Paver manufacture",
+    "Driveway paving",
+    "Commercial forecourt paving",
+    "SANS 1058:2021"
+  ],
+  "makesOffer": [
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Product",
+        "name": "Wetcast pavers, supply only"
+      }
+    },
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Service",
+        "name": "Paving supply and installation"
+      }
+    }
+  ],
+  "legalName": "TM Stone Solutions (Pty) Ltd",
+  "identifier": {
+    "@type": "PropertyValue",
+    "name": "Lesotho company registration",
+    "value": "A2026/34518"
+  }
+}
+</script>
+</head>
+<body>
+
+<nav><div class="nb">
+  <a href="#" class="lg"><div class="lg-m">TM</div><div><b>TM Stone</b><span>SOLUTIONS (PTY) LTD</span></div></a>
+  <ul id="nm">
+    <li><a class="nl" href="#work">Our Work</a></li>
+    <li><a class="nl" href="#services">Services</a></li>
+    <li><a class="nl" href="#calc">Instant Quote</a></li>
+    <li><a class="ncta" href="#contact">Get a Quote</a></li>
+  </ul>
+  <button class="ham" onclick="document.getElementById('nm').classList.toggle('open')">☰</button>
+</div></nav>
+
+<header class="hero">
+  <div class="hero-bed" aria-hidden="true"><figure></figure><figure></figure><figure></figure></div>
+  <div class="hero-veil" aria-hidden="true"></div>
+  <div class="w hero-in">
+  <div class="kick">MASERU · LESOTHO</div>
+  <h1>Paving that holds up</h1>
+  <p>Paving Lesotho since 2020. We manufacture our own wetcast pavers and lay them ourselves.<span class="sm-hide"> From a single driveway to a commercial forecourt, made to SANS 1058:2021, minimum 25 MPa, ±2 mm tolerance.</span></p>
+  <div class="hb">
+    <a href="#work" class="btn b1">See our work →</a>
+    <a href="#calc" class="btn b2">Price my paving</a>
+  </div>
+</div></header>
+
+<div class="specs"><div class="w specs-g">
+  <div><div class="v">25 MPa</div><div class="k">Min compressive strength</div></div>
+  <div><div class="v">SANS 1058</div><div class="k">2021 compliant</div></div>
+  <div><div class="v">40+</div><div class="k">Projects completed</div></div>
+  <div><div class="v">Since 2020</div><div class="k">Paving in Lesotho</div></div>
+</div></div>
+
+<section id="work"><div class="w">
+  <div class="lbl">Our Work</div>
+  <h2 class="tit">Driveways, forecourts, car parks</h2>
+  <p class="dsc">Residential driveways with pattern work, retail forecourts and commercial parking — laid and finished by our own crews.</p>
+  <div class="gal">
+    <div class="gp wide"><picture><source srcset="assets/work-2.webp" type="image/webp"><img src="assets/work-2.jpg" alt="Paved driveway with pattern detail, Maseru" width="1200" height="800" loading="lazy" decoding="async"></picture></div>
+    <div class="gp"><picture><source srcset="assets/work-11.webp" type="image/webp"><img src="assets/work-11.jpg" alt="Paved forecourt and parking bays at a Shoprite Express store" width="1200" height="800" loading="lazy" decoding="async"></picture></div>
+    <div class="gp"><picture><source srcset="assets/work-3.webp" type="image/webp"><img src="assets/work-3.jpg" alt="Completed residential paving project" width="1200" height="800" loading="lazy" decoding="async"></picture></div>
+    <div class="gp wide"><picture><source srcset="assets/work-12.webp" type="image/webp"><img src="assets/work-12.jpg" alt="Paved commercial car park with marked bays alongside a modern office building" width="1200" height="800" loading="lazy" decoding="async"></picture></div>
+    <div class="gp"><picture><source srcset="assets/work-8.webp" type="image/webp"><img src="assets/work-8.jpg" alt="Charcoal paving with gold accent squares across a walled residential driveway" width="1200" height="800" loading="lazy" decoding="async"></picture></div>
+    <div class="gp"><picture><source srcset="assets/work-4.webp" type="image/webp"><img src="assets/work-4.jpg" alt="Commercial paving installation" width="1200" height="800" loading="lazy" decoding="async"></picture></div>
+    <div class="gp wide"><picture><source srcset="assets/work-9.webp" type="image/webp"><img src="assets/work-9.jpg" alt="Long residential driveway in alternating cream and charcoal pavers" width="1200" height="800" loading="lazy" decoding="async"></picture></div>
+    <div class="gp"><picture><source srcset="assets/work-10.webp" type="image/webp"><img src="assets/work-10.jpg" alt="Curved entrance driveway with a decorative pebble-inlaid border" width="1200" height="800" loading="lazy" decoding="async"></picture></div>
+    <div class="gp"><picture><source srcset="assets/work-5.webp" type="image/webp"><img src="assets/work-5.jpg" alt="Retail forecourt paving" width="1200" height="800" loading="lazy" decoding="async"></picture></div>
+    <div class="gp wide"><picture><source srcset="assets/work-13.webp" type="image/webp"><img src="assets/work-13.jpg" alt="Commercial parking in charcoal pavers with the Maloti mountains behind" width="1200" height="800" loading="lazy" decoding="async"></picture></div>
+    <div class="gp"><picture><source srcset="assets/work-6.webp" type="image/webp"><img src="assets/work-6.jpg" alt="Close detail of laid pavers" width="1200" height="800" loading="lazy" decoding="async"></picture></div>
+    <div class="gp"><picture><source srcset="assets/work-7.webp" type="image/webp"><img src="assets/work-7.jpg" alt="Commercial car park paving" width="1200" height="800" loading="lazy" decoding="async"></picture></div>
+    <div class="gp"><picture><source srcset="assets/work-1.webp" type="image/webp"><img src="assets/work-1.jpg" alt="Hexagonal paver driveway" width="1200" height="800" loading="lazy" decoding="async"></picture></div>
+  </div>
+</div></section>
+
+<!-- ============ SERVICES ============ -->
+<!-- ============ CALCULATOR ============ -->
+<section id="calc" class="calc-sec"><div class="w">
+  <div class="lbl" style="color:var(--ac2)">Instant Quote</div>
+  <h2 class="tit">Know the price before you phone anyone</h2>
+  <p class="dsc">Enter your area and the paver you want, and see the supply price for the job straight away. No form, no waiting for a call back.</p>
+
+  <div class="calc">
+    <div class="pane">
+      <h3>Your job</h3>
+      <div class="sub" style="font-size:12px;color:#9aa1a8;margin-bottom:16px">All figures in Maloti (M)</div>
+
+      <label>Area to pave (m²)</label>
+      <input type="number" id="area" value="120" min="1" step="1">
+
+      <label>Paver</label>
+      <select id="ptype">
+        <option value="SQ200" data-l="2.0">200 × 200 × 50 mm Square</option>
+        <option value="SQ100" data-l="0.5">100 × 100 × 50 mm Square</option>
+        <option value="BR220" data-l="1.21">220 × 110 × 50 mm Brick / Bevel</option>
+        <option value="HEX200" data-l="1.30">Hexagon 200 × 50 mm</option>
+      </select>
+
+      <div class="mini">Prices are for supply from the yard, held at current material rates. Installation, base preparation, edging and transport are quoted per site after a measure-up.</div>
+    </div>
+
+    <div class="out">
+      <div class="big" id="total">M —<small id="persqm">— per m²</small></div>
+
+      <div class="brk">
+        <div class="br"><span>Pavers required</span><b id="units">—</b></div>
+        <div class="br"><span>Covers</span><b id="matp">—</b></div>
+        <div class="br tot"><span>Price per paver</span><b id="sellp">—</b></div>
+        <!-- Cost per paver, overhead, mould depreciation and gross profit were published
+             here. They are TM Stone's competitive position and were readable by anyone,
+             including competitors. The rows went on 2 September; the cost model itself was
+             still in the page source and in the copy until 10 September, when this page was
+             cited as evidence in a government submission and the whole model was replaced
+             with a published price list. The yard's costing belongs behind a login. -->
+      </div>
+
+      <div class="alert" id="alert"></div>
+      <div class="mini">Indicative manufacture price. Installation, base preparation, edging and transport are quoted per site after a measure-up.</div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ============ WORK ============ -->
+<section id="services" style="background:var(--sand2)"><div class="w">
+  <div class="lbl">What We Do</div>
+  <h2 class="tit">We make them and we lay them</h2>
+  <p class="dsc">Most people do one or the other. Because we manufacture our own pavers, you deal with one company from the batch to the broom finish — and the price doesn't carry a middleman.</p>
+  <div class="svc">
+    <div class="sc"><h3>Manufacture</h3><p>Wetcast pavers produced in our own yard to SANS 1058:2021 — minimum 25 MPa, ±2 mm tolerance.</p></div>
+    <div class="sc"><h3>Installation</h3><p>Laid to SANS 1200MJ. Base preparation, edge restraints, laying, cutting and compaction by our own crews. Residential driveways through to commercial car parks with marked bays.</p></div>
+    <div class="sc"><h3>Supply to trade</h3><p>Contractors and developers buy direct from the yard. Consistent batches, predictable lead times, and volume pricing that holds through the job.</p></div>
+  </div>
+</div></section>
+
+<section><div class="w"><div class="cta">
+  <div>
+    <h2>Send us your measurements</h2>
+    <p>Tell us the area and where you are. We'll come and measure, and you'll have a written quote — not a guess over the phone.</p>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:9px">
+    <a href="https://wa.me/26650659716?text=Lumela!%20I%27d%20like%20a%20quote%20for%20paving." target="_blank" rel="noopener" class="btn b1">💬 WhatsApp us</a>
+    <a href="tel:+26650659716" class="btn b2" style="border-color:rgba(255,255,255,.6)">Call +266 5065 9716</a>
+  </div>
+</div></div></section>
+
+<footer id="contact"><div class="w">
+  <strong style="color:#e6ddd4;font-size:15px">TM STONE SOLUTIONS (PTY) LTD</strong><br>
+  Trading as TM STONE · Paving in Lesotho since 2020<br>
+  Ha Tsosane Pela Boitumela · Maseru, Lesotho<br>
+  <a href="tel:+26650659716">+266 5065 9716</a> · <a href="https://wa.me/26650659716">WhatsApp</a><br>
+  Reg. A2026/34518
+  <div class="r">Website by <a href="https://mendgroup.co.za">MEND GROUP (PTY) LTD</a></div>
+</div></footer>
+
+<script src="assets/price-list.js"></script>
+<script>
+// ---- Published price list ----
+// There is no list in this file. Both public pages read assets/price-list.js, so
+// the price here and the price in /quote/ cannot drift apart again — they used to,
+// and a customer could read M159.93/m² here and M147.97/m² there in one sitting.
+// If that file ever fails to load, the calculator shows no price rather than a
+// wrong one. Do not paste a number back in: tests/price-parity.test.js will fail.
+// The yard's cost model — batch recipe, supplier rates, overhead, mould wear — is
+// deliberately NOT in this page, and is not in that file either.
+const PRICE = window.TMS_PRICE_LIST;   // M per paver, supply only
+const FACE  = window.TMS_FACE_M2;      // m² per paver
+
+const $ = id => document.getElementById(id);
+const M = n => 'M' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function calc(){
+  const area = Math.max(1, +$('area').value || 0);
+  const opt  = $('ptype').selectedOptions[0];
+  const code = opt.value;
+
+  const sellPer = PRICE[code];
+  const face = FACE[code];
+  const units = Math.ceil(area / face);
+  const total = units * sellPer;
+
+  $('units').textContent = units.toLocaleString('en-US') + ' pavers';
+  $('matp').textContent  = (1/face).toFixed(0) + ' pavers per m\u00b2';
+  $('sellp').textContent = M(sellPer);
+  $('total').firstChild.textContent = M(total);
+  $('persqm').textContent = M(total/area) + ' per m\u00b2';
+
+  $('alert').innerHTML = '<b>Indicative supply price.</b> Every job is measured on site before '
+    + 'a firm quote — ground conditions, edging and access change what a driveway actually costs.';
+}
+['area','ptype'].forEach(id=>{
+  $(id).addEventListener('input', calc); $(id).addEventListener('change', calc);
+});
+calc();
+</script>
+
+<script>
+/* The spec numbers count up once when they first come into view. If this script never
+   runs, the numbers are already correct in the HTML — nothing depends on it. */
+(function(){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var els = [].slice.call(document.querySelectorAll('.specs-g .v'));
+  if (!els.length) return;
+  function run(){
+    els = els.filter(function(el){
+      var r = el.getBoundingClientRect();
+      if (r.top > window.innerHeight - 40 || r.bottom < 0) return true;
+      countUp(el);
+      return false;
+    });
+    if (!els.length) window.removeEventListener('scroll', onScroll);
+  }
+  var ticking = false;
+  function onScroll(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){ run(); ticking = false; });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  run();
+
+  function countUp(el){
+    var m = el.textContent.trim().match(/^(\D*)(\d+)(.*)$/);
+    if (!m) return;
+    var pre = m[1], end = parseInt(m[2], 10), post = m[3], t0 = null;
+    function step(ts){
+      if (!t0) t0 = ts;
+      var k = Math.min((ts - t0) / 900, 1);
+      el.textContent = pre + Math.round(end * (1 - Math.pow(1 - k, 3))) + post;
+      if (k < 1) requestAnimationFrame(step);
+      else el.textContent = pre + end + post;
+    }
+    requestAnimationFrame(step);
+  }
+})();
+</script>
+
+<!-- Phones only. A paving customer decides on three things: does the work look good, what does
+     it cost, and can I reach you. The first two are now the first two sections. This is the
+     third, and it does not scroll away. -->
+<div class="callbar" aria-label="Contact TM Stone">
+  <a href="tel:+26650659716" class="cb cb1">Call</a>
+  <a href="https://wa.me/26650659716" class="cb cb2" rel="noopener">WhatsApp</a>
+</div>
+<script>
+/* The menu opened but never closed. Tap "Our Work" and the page jumps to the gallery
+   with the black panel still sitting on top of the thing you asked to see. The opening
+   stays on the button's own inline onclick, so the menu still works if this never runs;
+   this block only handles the closing, which is the part that was missing. */
+(function(){
+  var nm = document.getElementById('nm'), ham = document.querySelector('.ham');
+  if (!nm || !ham) return;
+  ham.setAttribute('aria-label','Menu');
+  ham.setAttribute('aria-controls','nm');
+  ham.setAttribute('aria-expanded','false');
+  function shut(){ nm.classList.remove('open'); ham.setAttribute('aria-expanded','false'); }
+  // Runs after the inline handler, so the class is already toggled by this point.
+  ham.addEventListener('click', function(){
+    ham.setAttribute('aria-expanded', nm.classList.contains('open') ? 'true' : 'false');
+  });
+  nm.addEventListener('click', function(e){ if (e.target.closest('a')) shut(); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && nm.classList.contains('open')) { shut(); ham.focus(); }
+  });
+})();
+</script>
+</body>
+</html>
