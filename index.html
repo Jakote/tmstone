@@ -454,7 +454,7 @@ footer a[href^="tel:"], footer a[href*="wa.me"]{
     <p>Tell us the area and where you are. We'll come and measure, and you'll have a written quote — not a guess over the phone.</p>
   </div>
   <div style="display:flex;flex-direction:column;gap:9px">
-    <a href="https://wa.me/26650659716?text=Lumela!%20I%27d%20like%20a%20quote%20for%20paving." target="_blank" rel="noopener" class="btn b1">💬 WhatsApp us</a>
+    <a id="wa-quote" href="https://wa.me/26650659716?text=Lumela!%20I%27d%20like%20a%20quote%20for%20paving." target="_blank" rel="noopener" class="btn b1">💬 WhatsApp us</a>
     <a href="tel:+26650659716" class="btn b2" style="border-color:rgba(255,255,255,.6)">Call +266 5065 9716</a>
   </div>
 </div></div></section>
@@ -502,6 +502,15 @@ function calc(){
 
   $('alert').innerHTML = '<b>Indicative supply price.</b> Every job is measured on site before '
     + 'a firm quote — ground conditions, edging and access change what a driveway actually costs.';
+
+  // The WhatsApp button carries what is on screen, so the enquiry arrives with the paver,
+  // the area and the estimate already in it. TM Stone's HQ Sales tab reads these back
+  // (parseEnquiry): keep "120 m²" with no thousands separator. The fixed sentence in the
+  // HTML is what a customer gets if this script never runs.
+  // tests/whatsapp-link.test.js holds this wording.
+  const msg = "Lumela TM Stone! I'd like a quote. Paver: " + opt.textContent.trim() + ' (' + code + '). '
+    + 'Area: ' + area + ' m\u00b2. Website estimate: ' + M(total) + ' (supply only).';
+  $('wa-quote').href = 'https://wa.me/26650659716?text=' + encodeURIComponent(msg);
 }
 ['area','ptype'].forEach(id=>{
   $(id).addEventListener('input', calc); $(id).addEventListener('change', calc);
