@@ -505,7 +505,8 @@ function waText(q, paverLabel){
   return [
     "Lumela! I'd like a quote for paving.",
     'Paver: ' + paverLabel,
-    'Area: ' + q.area.toLocaleString('en-US') + ' m\u00b2',
+    // No thousands separator: HQ's parseEnquiry reads "1,500" as 1.5 m\u00b2.
+    'Area: ' + q.area.toLocaleString('en-US',{useGrouping:false}) + ' m\u00b2',
     'Website price: ' + M(q.total) + ' supply only (' + q.units.toLocaleString('en-US') + ' pavers)',
     'Site location: ',
   ].join('\n');
