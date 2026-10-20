@@ -203,6 +203,28 @@ console.log('\n3. a second quote: 37.5 m², Hexagon\n');
   });
 }
 
+console.log('\n3b. a big job: 1500 m², 200 × 200 Square\n');
+
+/* HQ's Sales tab reads these messages with parseEnquiry(), whose area pattern
+   takes a comma as a decimal point. "Area: 1,500 m²" came through as 1.5 m²,
+   so every job of 1,000 m² or more landed 1,000 times too small. The area is
+   written without a thousands separator; the price keeps its separator because
+   parseEnquiry reads "M…" amounts correctly. */
+{
+  const page = loadPage();
+  setJob(page, 1500, 'SQ200');
+  let msg = '';
+  check('the button href is a wa.me link to his number', () => {
+    msg = msgOf(page.ids.waquote ? page.ids.waquote.href : '');
+  });
+  check('the area is written "Area: 1500 m²", with no thousands separator', () => {
+    has(msg, 'Area: 1500 m²', 'area');
+  });
+  check('the total in the message is still the total on the screen', () => {
+    has(msg, page.ids.total.firstChild.textContent, 'screen total in message');
+  });
+}
+
 console.log('\n4. nothing private, nothing broken\n');
 
 check('no cost figure or cost vocabulary in any message', () => {
