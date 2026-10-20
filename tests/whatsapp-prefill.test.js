@@ -155,6 +155,18 @@ check('every wa.me link on the page goes to his business number', () => {
   if (wrong.length) throw new Error(`wa.me links to other numbers: ${wrong.join(' ')}`);
 });
 
+check('every wa.me link on the page is marked data-wa-quote, footer included', () => {
+  const bare = [...HTML.matchAll(/<a\b[^>]*href="https:\/\/wa\.me\/[^"]*"[^>]*>([^<]*)<\/a>/g)]
+    .filter(m => !/\bdata-wa-quote\b/.test(m[0]));
+  if (bare.length) throw new Error(`not marked, so never carries the quote: ${bare.map(m => m[0]).join(' ')}`);
+});
+
+check('the footer has its own WhatsApp link, marked data-wa-quote', () => {
+  const foot = HTML.slice(HTML.indexOf('<footer'), HTML.indexOf('</footer>'));
+  if (!/<a\b[^>]*href="https:\/\/wa\.me\/[^"]*"[^>]*\bdata-wa-quote\b|<a\b[^>]*\bdata-wa-quote\b[^>]*href="https:\/\/wa\.me\//.test(foot))
+    throw new Error('no marked wa.me link inside <footer>');
+});
+
 console.log('\n2. a sample quote: 120 m², 200 × 200 Square (the page default)\n');
 
 {

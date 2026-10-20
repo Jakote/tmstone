@@ -465,7 +465,7 @@ footer a[href^="tel:"], footer a[href*="wa.me"]{
   <strong style="color:#e6ddd4;font-size:15px">TM STONE SOLUTIONS (PTY) LTD</strong><br>
   Trading as TM STONE · Paving in Lesotho since 2020<br>
   Ha Tsosane Pela Boitumela · Maseru, Lesotho<br>
-  <a href="tel:+26650659716">+266 5065 9716</a> · <a href="https://wa.me/26650659716">WhatsApp</a><br>
+  <a href="tel:+26650659716">+266 5065 9716</a> · <a href="https://wa.me/26650659716" id="wafoot" data-wa-quote>WhatsApp</a><br>
   Reg. A2026/34518
   <div class="r">Website by <a href="https://mendgroup.co.za">MEND GROUP (PTY) LTD</a></div>
 </div></footer>
@@ -530,8 +530,8 @@ function calc(){
     + 'a firm quote — ground conditions, edging and access change what a driveway actually costs.';
 
   // The calculator's own button always carries the quote on screen. The "WhatsApp us"
-  // button and the phone call bar keep their plain greeting until the customer has
-  // priced a job of their own, so nobody sends the 120 m² default by accident.
+  // button, the footer link and the phone call bar keep their plain greeting until the
+  // customer has priced a job of their own, so nobody sends the 120 m² default by accident.
   const href = waLink(waText(q, opt.textContent.trim()));
   document.querySelectorAll('[data-wa-quote]').forEach(a => {
     if (a.id === 'waquote' || priced) a.setAttribute('href', href);
